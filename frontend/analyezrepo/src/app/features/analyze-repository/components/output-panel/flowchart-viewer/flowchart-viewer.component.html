@@ -1,0 +1,26 @@
+<div class="flowchart">
+  <!-- Controls -->
+  <div class="flowchart__controls">
+    <button (click)="zoomOut()" class="ctrl-btn" title="Zoom Out">
+      <lucide-icon name="zoom-out" [size]="15"></lucide-icon>
+    </button>
+    <button (click)="zoomIn()" class="ctrl-btn" title="Zoom In">
+      <lucide-icon name="zoom-in" [size]="15"></lucide-icon>
+    </button>
+    <span class="flowchart__zoom-label">{{ zoomPercent }}%</span>
+    <span class="flowchart__spacer"></span>
+    <button (click)="downloadSvg()" class="ctrl-btn" title="Download SVG">
+      <lucide-icon name="download" [size]="15"></lucide-icon>
+    </button>
+  </div>
+
+  <!-- Chart -->
+  <div class="flowchart__canvas">
+    <div
+      #container
+      class="flowchart__diagram"
+      [style.transform]="'scale(' + zoom + ')'"
+      [style.transform-origin]="'top center'"
+    ></div>
+  </div>
+</div>

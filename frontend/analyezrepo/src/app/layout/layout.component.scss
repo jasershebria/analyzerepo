@@ -1,0 +1,14 @@
+@import 'app/variables';
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: $bg-primary;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}

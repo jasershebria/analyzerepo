@@ -1,0 +1,81 @@
+<div class="dashboard">
+  <div class="container-fluid">
+
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="dashboard__header">
+          <h1 class="dashboard__title">Dashboard</h1>
+          <p class="dashboard__subtitle">
+            Welcome back! Here's an overview of your repository analyses.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-4">
+      <div
+        *ngFor="let stat of stats"
+        class="col-12 col-sm-6 col-xl-3"
+      >
+        <div class="stat-card">
+          <div class="stat-card__top">
+            <div
+              class="stat-card__icon"
+              [style.background]="getGradient(stat.gradientFrom, stat.gradientTo)"
+            >
+              <lucide-icon [name]="stat.iconName" [size]="22" class="stat-card__icon-svg"></lucide-icon>
+            </div>
+            <span class="stat-card__change">{{ stat.change }}</span>
+          </div>
+          <p class="stat-card__value">{{ stat.value }}</p>
+          <p class="stat-card__label">{{ stat.label }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Analyses -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="recent-card">
+          <div class="recent-card__header">
+            <h2 class="recent-card__title">Recent Analyses</h2>
+          </div>
+          <div class="recent-card__body">
+            <div
+              *ngFor="let analysis of recentAnalyses"
+              class="analysis-row"
+            >
+              <div class="analysis-row__info">
+                <h3 class="analysis-row__name">{{ analysis.name }}</h3>
+                <p class="analysis-row__repo">{{ analysis.repo }}</p>
+              </div>
+              <div class="analysis-row__meta">
+                <p class="analysis-row__date">{{ analysis.date }}</p>
+                <p class="analysis-row__flows">{{ analysis.flows }} flows</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="row">
+      <div class="col-12">
+        <div class="cta-banner">
+          <h2 class="cta-banner__title">Ready to analyze a new repository?</h2>
+          <p class="cta-banner__text">
+            Connect your repository and let AI explain your business logic with interactive flowcharts.
+          </p>
+          <a routerLink="/analyze" class="cta-banner__btn">
+            <lucide-icon name="git-branch" [size]="18"></lucide-icon>
+            <span>Analyze Repository</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

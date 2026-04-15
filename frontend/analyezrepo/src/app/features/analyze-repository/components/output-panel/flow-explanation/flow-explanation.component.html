@@ -1,0 +1,73 @@
+<div class="flow-explanation">
+  <div
+    *ngFor="let step of steps"
+    class="step-card"
+    [class.step-card--expanded]="isExpanded(step.number)"
+  >
+    <!-- Step Header -->
+    <button (click)="toggle(step.number)" class="step-card__header">
+      <div class="step-card__badge">{{ step.number }}</div>
+      <div class="step-card__info">
+        <h3 class="step-card__title">{{ step.title }}</h3>
+        <p class="step-card__component">{{ step.frontendComponent }}</p>
+      </div>
+      <lucide-icon
+        [name]="isExpanded(step.number) ? 'chevron-up' : 'chevron-down'"
+        [size]="18"
+        class="step-card__chevron"
+      ></lucide-icon>
+    </button>
+
+    <!-- Expanded Details -->
+    <div
+      [@expandCollapse]="isExpanded(step.number) ? 'expanded' : 'collapsed'"
+      class="step-card__body"
+    >
+      <div class="step-card__body-inner">
+        <!-- Frontend Component -->
+        <div class="detail-row">
+          <div class="detail-row__icon detail-row__icon--accent">
+            <lucide-icon name="component" [size]="14"></lucide-icon>
+          </div>
+          <div class="detail-row__content">
+            <p class="detail-row__label">Frontend Component</p>
+            <p class="detail-row__value detail-row__value--mono">{{ step.frontendComponent }}</p>
+          </div>
+        </div>
+
+        <!-- User Action -->
+        <div class="detail-row">
+          <div class="detail-row__icon detail-row__icon--success">
+            <lucide-icon name="mouse-pointer" [size]="14"></lucide-icon>
+          </div>
+          <div class="detail-row__content">
+            <p class="detail-row__label">User Action</p>
+            <p class="detail-row__value">{{ step.userAction }}</p>
+          </div>
+        </div>
+
+        <!-- API Endpoint -->
+        <div class="detail-row">
+          <div class="detail-row__icon detail-row__icon--warning">
+            <lucide-icon name="server" [size]="14"></lucide-icon>
+          </div>
+          <div class="detail-row__content">
+            <p class="detail-row__label">API Endpoint</p>
+            <code class="detail-row__code">{{ step.apiEndpoint }}</code>
+          </div>
+        </div>
+
+        <!-- Backend Method -->
+        <div class="detail-row">
+          <div class="detail-row__icon detail-row__icon--pink">
+            <lucide-icon name="code-2" [size]="14"></lucide-icon>
+          </div>
+          <div class="detail-row__content">
+            <p class="detail-row__label">Backend Method</p>
+            <p class="detail-row__value detail-row__value--mono">{{ step.backendMethod }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

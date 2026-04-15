@@ -1,0 +1,41 @@
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar__logo">
+    <div class="logo">
+      <div class="logo__icon">
+        <lucide-icon name="zap" [size]="22" class="logo__zap"></lucide-icon>
+      </div>
+      <span class="logo__text">FlowAI</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar__nav">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.path"
+      routerLinkActive="nav-item--active"
+      [routerLinkActiveOptions]="{ exact: item.exact }"
+      class="nav-item"
+    >
+      <lucide-icon [name]="item.iconName" [size]="18" class="nav-item__icon"></lucide-icon>
+      <span class="nav-item__label">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar__footer">
+    <button class="footer-btn">
+      <lucide-icon name="moon" [size]="18" class="footer-btn__icon"></lucide-icon>
+      <span>Dark Mode</span>
+    </button>
+
+    <div class="user-card">
+      <div class="user-card__avatar">JD</div>
+      <div class="user-card__info">
+        <p class="user-card__name">John Doe</p>
+        <p class="user-card__email">john&#64;example.com</p>
+      </div>
+    </div>
+  </div>
+</aside>

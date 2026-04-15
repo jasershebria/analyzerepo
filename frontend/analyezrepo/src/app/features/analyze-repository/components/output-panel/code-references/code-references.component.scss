@@ -1,0 +1,111 @@
+@import 'app/variables';
+
+.code-refs {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// ── Reference Card ────────────────────────────────────
+.ref-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color-2;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  transition: border-color $transition;
+
+  &:hover,
+  &--expanded {
+    border-color: rgba($accent, 0.5);
+  }
+}
+
+.ref-card__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  transition: background-color $transition;
+
+  &:hover {
+    background-color: rgba($bg-card-hover, 0.3);
+  }
+}
+
+.ref-card__file-icon {
+  color: $accent;
+  flex-shrink: 0;
+}
+
+.ref-card__filename {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: $text-primary;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ref-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.ref-card__copy-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: $radius-sm;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition, color $transition;
+
+  &:hover {
+    background-color: $bg-card-hover;
+    color: $text-primary;
+  }
+}
+
+.ref-card__copy-icon--copied {
+  color: $success;
+}
+
+.ref-card__chevron {
+  color: $text-muted;
+}
+
+// ── Snippet ───────────────────────────────────────────
+.ref-card__snippet-wrap {
+  border-top: 1px solid $border-color-2;
+}
+
+.ref-card__snippet-inner {
+  padding: 1rem 1.25rem;
+}
+
+.ref-card__pre {
+  background-color: $bg-primary;
+  border: 1px solid $border-color-2;
+  border-radius: $radius;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.ref-card__code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  color: $text-primary;
+  line-height: 1.6;
+  white-space: pre;
+}

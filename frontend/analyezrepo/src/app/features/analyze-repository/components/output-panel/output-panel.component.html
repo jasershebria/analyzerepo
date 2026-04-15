@@ -1,0 +1,61 @@
+<!-- Empty state -->
+<div *ngIf="!data" class="output-empty">
+  <div class="output-empty__icon">
+    <lucide-icon name="workflow" [size]="32" class="output-empty__svg"></lucide-icon>
+  </div>
+  <h3 class="output-empty__title">No Analysis Yet</h3>
+  <p class="output-empty__text">
+    Ask a question about your codebase to see the flow explanation, flowchart, and code references here.
+  </p>
+</div>
+
+<!-- Tabs panel -->
+<div *ngIf="data" class="output-panel">
+  <!-- Tab Bar -->
+  <div class="output-panel__tabs">
+    <div class="tab-bar">
+      <button
+        (click)="setTab('flow')"
+        class="tab-bar__item"
+        [class.tab-bar__item--active]="activeTab === 'flow'"
+      >
+        <lucide-icon name="file-text" [size]="15"></lucide-icon>
+        <span>Flow</span>
+      </button>
+      <button
+        (click)="setTab('chart')"
+        class="tab-bar__item"
+        [class.tab-bar__item--active]="activeTab === 'chart'"
+      >
+        <lucide-icon name="workflow" [size]="15"></lucide-icon>
+        <span>Chart</span>
+      </button>
+      <button
+        (click)="setTab('code')"
+        class="tab-bar__item"
+        [class.tab-bar__item--active]="activeTab === 'code'"
+      >
+        <lucide-icon name="code" [size]="15"></lucide-icon>
+        <span>Code</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="output-panel__content">
+    <app-flow-explanation
+      *ngIf="activeTab === 'flow'"
+      [steps]="data.steps"
+    ></app-flow-explanation>
+
+    <app-flowchart-viewer
+      *ngIf="activeTab === 'chart'"
+      [mermaidCode]="data.mermaidCode"
+    ></app-flowchart-viewer>
+
+    <app-code-references
+      *ngIf="activeTab === 'code'"
+      [references]="data.codeReferences"
+    ></app-code-references>
+  </div>
+</div>

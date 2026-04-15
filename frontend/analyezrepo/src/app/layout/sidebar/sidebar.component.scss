@@ -1,0 +1,160 @@
+@import 'app/variables';
+
+.sidebar {
+  width: $sidebar-width;
+  flex-shrink: 0;
+  background-color: $bg-card;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// ── Logo ──────────────────────────────────────────────
+.sidebar__logo {
+  padding: 1.5rem;
+  border-bottom: 1px solid $border-color;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius-lg;
+  background: $accent-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo__zap {
+  color: #ffffff;
+}
+
+.logo__text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+// ── Navigation ────────────────────────────────────────
+.sidebar__nav {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius;
+  color: $text-muted;
+  transition: background-color $transition, color $transition;
+  text-decoration: none;
+
+  &:hover {
+    background-color: rgba($bg-card-hover, 0.5);
+    color: $text-primary;
+  }
+
+  &--active {
+    background-color: $bg-card-hover;
+    color: $text-primary;
+  }
+}
+
+.nav-item__icon {
+  flex-shrink: 0;
+}
+
+.nav-item__label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+// ── Footer ────────────────────────────────────────────
+.sidebar__footer {
+  padding: 1rem;
+  border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius;
+  color: $text-muted;
+  transition: background-color $transition, color $transition;
+  font-size: 0.9375rem;
+
+  &:hover {
+    background-color: rgba($bg-card-hover, 0.5);
+    color: $text-primary;
+  }
+}
+
+.footer-btn__icon {
+  flex-shrink: 0;
+}
+
+// ── User Card ─────────────────────────────────────────
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius;
+  background-color: rgba($bg-card-hover, 0.3);
+}
+
+.user-card__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: $accent-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-card__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-card__email {
+  font-size: 0.75rem;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.125rem;
+}

@@ -1,0 +1,170 @@
+@import 'app/variables';
+
+.history {
+  padding: 2rem;
+}
+
+.history__title {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.history__subtitle {
+  color: $text-muted;
+  font-size: 0.9375rem;
+}
+
+// ── Search ────────────────────────────────────────────
+.search-wrap {
+  position: relative;
+}
+
+.search-wrap__icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-muted;
+  pointer-events: none;
+}
+
+.search-wrap__field {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background-color: $bg-card;
+  border: 1px solid $border-color-2;
+  border-radius: $radius;
+  color: $text-primary;
+  font-size: 0.9375rem;
+  transition: border-color $transition, box-shadow $transition;
+
+  &::placeholder { color: $text-subtle; }
+
+  &:focus {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.15);
+  }
+}
+
+// ── Table Card ────────────────────────────────────────
+.history-table-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-xl;
+  overflow: hidden;
+}
+
+.history-table-wrap {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table__head-row {
+  background-color: $bg-primary;
+  border-bottom: 1px solid $border-color;
+}
+
+.history-table__th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.history-table__row {
+  border-bottom: 1px solid $border-color;
+  cursor: pointer;
+  transition: background-color $transition;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background-color: rgba($bg-card-hover, 0.3); }
+}
+
+.history-table__td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+}
+
+.history-table__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: $text-primary;
+}
+
+// Repo Cell
+.repo-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repo-cell__icon { color: $text-muted; flex-shrink: 0; }
+.repo-cell__text { font-size: 0.875rem; color: $text-muted; }
+
+// Date Cell
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.date-cell__icon { color: $text-muted; flex-shrink: 0; }
+
+.date-cell__date {
+  font-size: 0.875rem;
+  color: $text-primary;
+  margin-bottom: 0.1rem;
+}
+
+.date-cell__time {
+  font-size: 0.75rem;
+  color: $text-subtle;
+}
+
+// Flows Badge
+.flows-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba($accent, 0.1);
+  color: $accent;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.history-table__queries {
+  font-size: 0.875rem;
+  color: $text-muted;
+}
+
+// Delete Button
+.delete-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition;
+
+  &:hover { background-color: rgba($danger, 0.1); }
+}
+
+.delete-btn__icon { color: $danger; }
+
+// Empty State
+.history-empty {
+  padding: 3rem;
+  text-align: center;
+}
+
+.history-empty__text {
+  font-size: 0.9375rem;
+  color: $text-muted;
+}

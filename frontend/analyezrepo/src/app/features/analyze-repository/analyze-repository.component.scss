@@ -1,0 +1,43 @@
+@import 'app/variables';
+
+.analyze-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.analyze-page__header {
+  padding: 1.5rem;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.analyze-page__body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.analyze-page__chat {
+  flex: 1;
+  border-right: 1px solid $border-color;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.analyze-page__output {
+  width: 600px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1200px) {
+    width: 440px;
+  }
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}

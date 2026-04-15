@@ -1,0 +1,64 @@
+@import 'app/variables';
+
+.flowchart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: $bg-primary;
+  overflow: hidden;
+}
+
+// ── Controls ──────────────────────────────────────────
+.flowchart__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.ctrl-btn {
+  width: 2rem;
+  height: 2rem;
+  background-color: $bg-card;
+  border: 1px solid $border-color-2;
+  border-radius: $radius-sm;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color $transition, color $transition;
+
+  &:hover {
+    border-color: $accent;
+    color: $text-primary;
+  }
+}
+
+.flowchart__zoom-label {
+  padding: 0.25rem 0.75rem;
+  background-color: $bg-card;
+  border: 1px solid $border-color-2;
+  border-radius: $radius-sm;
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.flowchart__spacer {
+  flex: 1;
+}
+
+// ── Canvas ────────────────────────────────────────────
+.flowchart__canvas {
+  flex: 1;
+  overflow: auto;
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.flowchart__diagram {
+  transition: transform 0.2s ease;
+}

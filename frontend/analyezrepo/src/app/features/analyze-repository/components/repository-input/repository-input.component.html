@@ -1,0 +1,69 @@
+<div class="repo-input">
+  <div class="repo-input__heading">
+    <h2 class="repo-input__title">Connect Repository</h2>
+    <p class="repo-input__subtitle">
+      Connect your GitHub repository to start analyzing business logic
+    </p>
+  </div>
+
+  <div class="row g-3 align-items-end">
+    <!-- Repository URL -->
+    <div class="col-12 col-md-5">
+      <label class="repo-input__label">Repository URL</label>
+      <div class="input-wrap">
+        <lucide-icon name="github" [size]="16" class="input-wrap__icon"></lucide-icon>
+        <input
+          type="text"
+          [(ngModel)]="repoUrl"
+          placeholder="https://github.com/username/repo"
+          [disabled]="isConnected"
+          class="input-wrap__field"
+        />
+      </div>
+    </div>
+
+    <!-- Access Token -->
+    <div class="col-12 col-md-5">
+      <label class="repo-input__label">Access Token</label>
+      <div class="input-wrap">
+        <lucide-icon name="lock" [size]="16" class="input-wrap__icon"></lucide-icon>
+        <input
+          type="password"
+          [(ngModel)]="token"
+          placeholder="ghp_xxxxxxxxxxxx"
+          [disabled]="isConnected"
+          class="input-wrap__field"
+        />
+      </div>
+    </div>
+
+    <!-- Connect Button -->
+    <div class="col-12 col-md-2">
+      <div class="repo-input__actions">
+        <button
+          (click)="handleConnect()"
+          [disabled]="!canConnect"
+          class="connect-btn"
+          [class.connect-btn--connected]="isConnected"
+        >
+          <ng-container *ngIf="isLoading">
+            <span class="connect-btn__spinner"></span>
+            Connecting...
+          </ng-container>
+          <ng-container *ngIf="!isLoading && isConnected">
+            <lucide-icon name="check-circle-2" [size]="16"></lucide-icon>
+            Connected
+          </ng-container>
+          <ng-container *ngIf="!isLoading && !isConnected">
+            <lucide-icon name="github" [size]="16"></lucide-icon>
+            Connect
+          </ng-container>
+        </button>
+        <span *ngIf="isConnected" class="success-badge">
+          <lucide-icon name="check-circle-2" [size]="14"></lucide-icon>
+          Repository connected
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

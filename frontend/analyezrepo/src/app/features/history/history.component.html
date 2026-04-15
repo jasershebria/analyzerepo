@@ -1,0 +1,91 @@
+<div class="history">
+  <div class="container-fluid">
+
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h1 class="history__title">Analysis History</h1>
+        <p class="history__subtitle">View and manage your previous repository analyses</p>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="row mb-4">
+      <div class="col-12 col-md-5">
+        <div class="search-wrap">
+          <lucide-icon name="search" [size]="16" class="search-wrap__icon"></lucide-icon>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search analyses..."
+            class="search-wrap__field"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="row">
+      <div class="col-12">
+        <div class="history-table-card">
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <thead>
+                <tr class="history-table__head-row">
+                  <th class="history-table__th">Analysis</th>
+                  <th class="history-table__th">Repository</th>
+                  <th class="history-table__th">Date</th>
+                  <th class="history-table__th">Flows</th>
+                  <th class="history-table__th">Queries</th>
+                  <th class="history-table__th">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let item of filteredHistory"
+                  class="history-table__row"
+                >
+                  <td class="history-table__td">
+                    <span class="history-table__name">{{ item.name }}</span>
+                  </td>
+                  <td class="history-table__td">
+                    <div class="repo-cell">
+                      <lucide-icon name="git-branch" [size]="14" class="repo-cell__icon"></lucide-icon>
+                      <span class="repo-cell__text">{{ item.repo }}</span>
+                    </div>
+                  </td>
+                  <td class="history-table__td">
+                    <div class="date-cell">
+                      <lucide-icon name="calendar" [size]="14" class="date-cell__icon"></lucide-icon>
+                      <div>
+                        <p class="date-cell__date">{{ item.date }}</p>
+                        <p class="date-cell__time">{{ item.time }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="history-table__td">
+                    <span class="flows-badge">{{ item.flows }} flows</span>
+                  </td>
+                  <td class="history-table__td">
+                    <span class="history-table__queries">{{ item.queries }} queries</span>
+                  </td>
+                  <td class="history-table__td">
+                    <button (click)="deleteItem(item.id)" class="delete-btn" title="Delete">
+                      <lucide-icon name="trash-2" [size]="15" class="delete-btn__icon"></lucide-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="filteredHistory.length === 0" class="history-empty">
+            <p class="history-empty__text">No analyses found</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

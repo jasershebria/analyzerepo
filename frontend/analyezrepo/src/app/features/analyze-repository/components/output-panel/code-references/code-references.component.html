@@ -1,0 +1,41 @@
+<div class="code-refs">
+  <div
+    *ngFor="let ref of references"
+    class="ref-card"
+    [class.ref-card--expanded]="isExpanded(ref.file)"
+  >
+    <!-- Header -->
+    <button (click)="toggle(ref.file)" class="ref-card__header">
+      <lucide-icon name="file-code" [size]="16" class="ref-card__file-icon"></lucide-icon>
+      <span class="ref-card__filename">{{ ref.file }}</span>
+      <div class="ref-card__actions">
+        <button
+          (click)="copySnippet($event, ref.snippet, ref.file)"
+          class="ref-card__copy-btn"
+          [title]="isCopied(ref.file) ? 'Copied!' : 'Copy code'"
+        >
+          <lucide-icon
+            [name]="isCopied(ref.file) ? 'check' : 'copy'"
+            [size]="14"
+            [class.ref-card__copy-icon--copied]="isCopied(ref.file)"
+          ></lucide-icon>
+        </button>
+        <lucide-icon
+          [name]="isExpanded(ref.file) ? 'chevron-up' : 'chevron-down'"
+          [size]="16"
+          class="ref-card__chevron"
+        ></lucide-icon>
+      </div>
+    </button>
+
+    <!-- Snippet -->
+    <div
+      [@expandCollapse]="isExpanded(ref.file) ? 'expanded' : 'collapsed'"
+      class="ref-card__snippet-wrap"
+    >
+      <div class="ref-card__snippet-inner">
+        <pre class="ref-card__pre"><code class="ref-card__code">{{ ref.snippet }}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
