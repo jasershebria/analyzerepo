@@ -21,7 +21,7 @@ export class RepositoryInputComponent {
     this.repoSelected.emit(repo);
   }
 
-  navigateToSettings(): void {
+  navigateToAddRepo(): void {
     this.router.navigate(['/settings']);
   }
 }

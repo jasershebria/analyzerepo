@@ -1,0 +1,97 @@
+<div class="add-header">
+  <button (click)="goBack()" class="back-btn">
+    <lucide-icon name="arrow-left" [size]="16"></lucide-icon>
+    Back to Settings
+  </button>
+  <h2 class="add-header__title">Add New Repository</h2>
+  <p class="add-header__subtitle">Connect a GitHub repository to analyze its business logic</p>
+</div>
+
+<form (ngSubmit)="handleSubmit()" class="add-form">
+
+  <div class="settings-card">
+    <div class="settings-card__header">
+      <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+        <lucide-icon name="github" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="settings-card__title">Repository Details</h2>
+        <p class="settings-card__desc">Enter your repository information</p>
+      </div>
+    </div>
+
+    <div class="settings-card__body">
+
+      <div class="field">
+        <label class="field__label">
+          Repository Name
+          <span class="field__optional">(Optional)</span>
+        </label>
+        <input
+          type="text"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          name="name"
+          placeholder="My Awesome Project"
+          class="field__input"
+        />
+        <p class="field__hint">If not provided, the name is taken from the URL.</p>
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          Repository URL <span class="field__required">*</span>
+        </label>
+        <input
+          type="url"
+          [ngModel]="repoUrl()"
+          (ngModelChange)="repoUrl.set($event)"
+          name="repoUrl"
+          placeholder="https://github.com/username/repository"
+          required
+          class="field__input"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          GitHub Personal Access Token <span class="field__required">*</span>
+        </label>
+        <input
+          type="password"
+          [ngModel]="token()"
+          (ngModelChange)="token.set($event)"
+          name="token"
+          placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+          required
+          class="field__input"
+        />
+        <p class="field__hint">
+          Required scopes:
+          <code class="field__code">repo</code>,
+          <code class="field__code">read:org</code>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="!canSubmit()" class="submit-btn">
+      <lucide-icon name="plus" [size]="18"></lucide-icon>
+      {{ isSubmitting() ? 'Adding...' : 'Add Repository' }}
+    </button>
+    <button type="button" (click)="goBack()" class="cancel-btn">Cancel</button>
+  </div>
+
+  <div class="help-card">
+    <h3 class="help-card__title">How to get a GitHub token</h3>
+    <ol class="help-card__list">
+      <li>Go to GitHub Settings → Developer settings → Personal access tokens</li>
+      <li>Click "Generate new token (classic)"</li>
+      <li>Select scopes: <code class="field__code">repo</code> and <code class="field__code">read:org</code></li>
+      <li>Copy the generated token and paste it above</li>
+    </ol>
+  </div>
+
+</form>

@@ -45,6 +45,7 @@ import {
   FolderGit2,
   Plus,
   ExternalLink,
+  ArrowLeft,
 } from 'lucide-angular';
 
 const LUCIDE_ICONS = {
@@ -89,6 +90,7 @@ const LUCIDE_ICONS = {
   FolderGit2,
   Plus,
   ExternalLink,
+  ArrowLeft,
 };
 
 @NgModule({

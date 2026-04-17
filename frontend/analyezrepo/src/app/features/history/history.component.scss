@@ -1,4 +1,4 @@
-@import 'app/variables';
+@use 'app/variables' as *;
 
 .history {
   padding: 2rem;

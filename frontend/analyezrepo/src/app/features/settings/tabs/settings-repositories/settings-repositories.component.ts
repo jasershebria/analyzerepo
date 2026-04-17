@@ -1,12 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-
-export interface Repository {
-  id: string;
-  name: string;
-  url: string;
-  addedAt: string;
-}
+import { Repository } from '../../../../models/analysis.models';
 
 @Component({
   selector: 'app-settings-repositories',
@@ -21,12 +15,12 @@ export class SettingsRepositoriesComponent {
     JSON.parse(localStorage.getItem('repositories') ?? '[]')
   );
 
+  navigateToAddRepo(): void {
+    this.router.navigate(['/settings/repositories/add']);
+  }
+
   deleteRepo(id: string): void {
     this.repositories.update(repos => repos.filter(r => r.id !== id));
     localStorage.setItem('repositories', JSON.stringify(this.repositories()));
-  }
-
-  navigateToAddRepo(): void {
-    this.router.navigate(['/analyze']);
   }
 }

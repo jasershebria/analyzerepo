@@ -1,4 +1,5 @@
-@import 'app/variables';
+@use 'app/variables' as *;
+@forward 'app/variables';
 
 // ── Settings Card ─────────────────────────────────────
 .settings-card {

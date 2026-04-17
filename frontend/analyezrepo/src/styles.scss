@@ -1,8 +1,8 @@
 // Bootstrap Grid only (no buttons, forms, utilities – just container/row/col)
-@import 'bootstrap/scss/bootstrap-grid';
+@use 'bootstrap/scss/bootstrap-grid';
 
 // Design tokens
-@import 'app/variables';
+@use 'app/variables' as *;
 
 // ============================================================
 // Global Reset & Base
