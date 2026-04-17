@@ -13,7 +13,15 @@
     </button>
   </div>
 
-  @if (repositories().length > 0) {
+  @if (error()) {
+    <div class="settings-card__body">
+      <p class="error-text">{{ error() }}</p>
+    </div>
+  } @else if (loading()) {
+    <div class="settings-card__body">
+      <p class="loading-text">Loading repositories...</p>
+    </div>
+  } @else if (repositories().length > 0) {
     <div class="settings-card__body settings-card__body--no-gap">
       <table class="repo-table">
         <thead>
@@ -34,12 +42,12 @@
                 </div>
               </td>
               <td>
-                <a [href]="repo.url" target="_blank" rel="noopener noreferrer" class="repo-table__url">
-                  {{ repo.url.replace('https://', '') }}
+                <a [href]="repo.webUrl" target="_blank" rel="noopener noreferrer" class="repo-table__url">
+                  {{ repo.webUrl.replace('https://', '') }}
                   <lucide-icon name="external-link" [size]="12"></lucide-icon>
                 </a>
               </td>
-              <td class="repo-table__date">{{ repo.addedAt | date }}</td>
+              <td class="repo-table__date">{{ repo.createdAt | date }}</td>
               <td class="text-right">
                 <button (click)="deleteRepo(repo.id)" class="repo-table__delete">
                   <lucide-icon name="trash-2" [size]="16"></lucide-icon>

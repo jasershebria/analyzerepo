@@ -1,0 +1,171 @@
+<div class="add-header">
+  <button (click)="goBack()" class="back-btn">
+    <lucide-icon name="arrow-left" [size]="16"></lucide-icon>
+    Back to Settings
+  </button>
+  <h2 class="add-header__title">Add New Repository</h2>
+  <p class="add-header__subtitle">Connect a repository to analyze its business logic</p>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="handleSubmit()" class="add-form">
+
+  <div *ngIf="errorMessage" class="error-banner">{{ errorMessage }}</div>
+
+  <!-- Repository Details -->
+  <div class="settings-card">
+    <div class="settings-card__header">
+      <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+        <lucide-icon name="github" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="settings-card__title">Repository Details</h2>
+        <p class="settings-card__desc">Enter your repository information</p>
+      </div>
+    </div>
+
+    <div class="settings-card__body">
+
+      <div class="field">
+        <label class="field__label">
+          Repository Name <span class="field__required">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="name"
+          placeholder="My Awesome Project"
+          class="field__input"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          Web URL <span class="field__required">*</span>
+        </label>
+        <input
+          type="url"
+          formControlName="webUrl"
+          placeholder="https://github.com/username/repository"
+          class="field__input"
+        />
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Authentication -->
+  <div class="settings-card">
+    <div class="settings-card__header">
+      <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+        <lucide-icon name="key" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="settings-card__title">Authentication</h2>
+        <p class="settings-card__desc">Configure how to authenticate with the repository</p>
+      </div>
+    </div>
+
+    <div class="settings-card__body">
+
+      <div class="field">
+        <label class="field__label">
+          Provider <span class="field__required">*</span>
+        </label>
+        <select formControlName="providerId" class="field__input">
+          <option value="">— Select a provider —</option>
+          @for (p of providers; track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          Authentication Type <span class="field__required">*</span>
+        </label>
+        <select formControlName="authenticationType" class="field__input">
+          @for (t of authTypes; track t.value) {
+            <option [value]="t.value">{{ t.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label">
+          Secret / Token <span class="field__required">*</span>
+        </label>
+        <input
+          type="password"
+          formControlName="secretRef"
+          placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+          class="field__input"
+        />
+        <p class="field__hint">
+          For GitHub PAT, required scopes:
+          <code class="field__code">repo</code>,
+          <code class="field__code">read:org</code>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Branch Rules -->
+  <div class="settings-card">
+    <div class="settings-card__header">
+      <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+        <lucide-icon name="git-branch" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+      </div>
+      <div>
+        <h2 class="settings-card__title">Branch Rules</h2>
+        <p class="settings-card__desc">At least one branch rule is required</p>
+      </div>
+    </div>
+
+    <div class="settings-card__body" formArrayName="branchRules">
+      @for (rule of branchRules.controls; track i; let i = $index) {
+      <div
+        [formGroupName]="i"
+        class="branch-rule"
+      >
+        <div class="branch-rule__fields">
+          <div class="field field--inline">
+            <label class="field__label">Pattern <span class="field__required">*</span></label>
+            <input
+              type="text"
+              formControlName="pattern"
+              placeholder="main"
+              class="field__input"
+            />
+          </div>
+          <label class="field__checkbox">
+            <input type="checkbox" formControlName="scanOnPush" />
+            Scan on push
+          </label>
+        </div>
+        <button
+          type="button"
+          (click)="removeBranchRule(i)"
+          [disabled]="branchRules.length === 1"
+          class="remove-btn"
+        >
+          <lucide-icon name="trash-2" [size]="16"></lucide-icon>
+        </button>
+      </div>
+      }
+
+      <button type="button" (click)="addBranchRule()" class="add-rule-btn">
+        <lucide-icon name="plus" [size]="16"></lucide-icon>
+        Add Branch Rule
+      </button>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="form.invalid || isSubmitting" class="submit-btn">
+      <lucide-icon name="plus" [size]="18"></lucide-icon>
+      {{ isSubmitting ? 'Adding...' : 'Add Repository' }}
+    </button>
+    <button type="button" (click)="goBack()" class="cancel-btn">Cancel</button>
+  </div>
+
+</form>

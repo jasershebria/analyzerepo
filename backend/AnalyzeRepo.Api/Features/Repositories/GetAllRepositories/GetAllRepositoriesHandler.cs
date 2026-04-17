@@ -1,5 +1,4 @@
 using AnalyzeRepo.Api.Data.Infrastructure;
-using AnalyzeRepo.Api.Features.Providers.Domain;
 using AnalyzeRepo.Api.Features.Repositories;
 using AnalyzeRepo.Api.Common;
 using MediatR;
@@ -15,34 +14,26 @@ public class GetAllRepositoriesHandler : IRequestHandler<GetAllRepositoriesQuery
 
     public async Task<PagedResult<RepositoryDto>> Handle(GetAllRepositoriesQuery request, CancellationToken cancellationToken)
     {
-        var query = from repo in _context.Repositories
-                    join provider in _context.SourceProviders on repo.ProviderId equals provider.Id
-                    select new
-                    {
-                        Repository   = repo,
-                        ProviderName = provider.Name
-                    };
-
-        query = query.AsNoTracking();
+        var query = _context.Repositories.AsNoTracking();
 
         if (!request.IncludeDeleted)
-            query = query.Where(x => !x.Repository.IsDeleted);
+            query = query.Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var term = request.SearchTerm.ToLower();
             query = query.Where(x =>
-                x.Repository.Name.ToLower().Contains(term) ||
-                x.Repository.WebUrl.ToLower().Contains(term));
+                x.Name.ToLower().Contains(term) ||
+                x.WebUrl.ToLower().Contains(term));
         }
 
         if (request.ProviderId.HasValue)
-            query = query.Where(x => x.Repository.ProviderId == request.ProviderId.Value);
+            query = query.Where(x => x.ProviderId == request.ProviderId.Value);
 
         if (request.IsActive.HasValue)
-            query = query.Where(x => x.Repository.IsActive == request.IsActive.Value);
+            query = query.Where(x => x.IsActive == request.IsActive.Value);
 
-        query = query.OrderByDescending(x => x.Repository.CreatedAt);
+        query = query.OrderByDescending(x => x.CreatedAt);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -55,15 +46,10 @@ public class GetAllRepositoriesHandler : IRequestHandler<GetAllRepositoriesQuery
             .Take(request.MaxResultCount)
             .Select(x => new RepositoryDto
             {
-                Id               = x.Repository.Id,
-                Name             = x.Repository.Name,
-                ProviderId       = x.Repository.ProviderId,
-                ProviderName     = x.ProviderName,
-                WebUrl           = x.Repository.WebUrl,
-                IsActive         = x.Repository.IsActive,
-                CreatedAt        = x.Repository.CreatedAt,
-                LastSeenAtUtc    = x.Repository.LastSeenAtUtc,
-                BranchRulesCount = x.Repository.BranchRules.Count
+                Id        = x.Id,
+                Name      = x.Name,
+                WebUrl    = x.WebUrl,
+                CreatedAt = x.CreatedAt,
             })
             .ToListAsync(cancellationToken);
 

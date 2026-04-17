@@ -1,9 +1,50 @@
+export interface ProviderDto {
+  id: string;
+  name: string;
+  code: string;
+  apiBaseUrl: string;
+  isActive: boolean;
+}
+
+export interface CreateRepositoryCommand {
+  providerId: string;
+  providerRepoId: string;
+  name: string;
+  webUrl: string;
+  cloneUrl: string;
+  defaultBranch: string;
+  authenticationType: number;
+  secretRef: string;
+  runInitialScan: boolean;
+  branchRules: { pattern: string; scanOnPush: boolean }[];
+}
+
+export interface CreateRepositoryResponse {
+  id: string;
+  name: string;
+  providerId: string;
+  webUrl: string;
+  createdAt: string;
+}
+
 export interface Repository {
   id: string;
   name: string;
   url: string;
   token?: string;
   addedAt: string;
+}
+
+export interface RepositoryDto {
+  id: string;
+  name: string;
+  webUrl: string;
+  createdAt: string;
+}
+
+export interface PagedResult<T> {
+  totalCount: number;
+  items: T[];
 }
 
 export interface Message {

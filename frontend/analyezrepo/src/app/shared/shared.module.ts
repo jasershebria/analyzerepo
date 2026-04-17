@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   LucideAngularModule,
   LayoutDashboard,
@@ -98,12 +98,14 @@ const LUCIDE_ICONS = {
     CommonModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
     LucideAngularModule.pick(LUCIDE_ICONS),
   ],
   exports: [
     CommonModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
     LucideAngularModule,
   ],
 })

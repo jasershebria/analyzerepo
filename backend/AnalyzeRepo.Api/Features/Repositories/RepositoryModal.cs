@@ -46,15 +46,10 @@ public record GetAllRepositoriesQuery : IPaginationFilter, IRequest<PagedResult<
 
 public record RepositoryDto
 {
-    public Guid      Id              { get; set; }
-    public string    Name            { get; set; } = default!;
-    public Guid      ProviderId      { get; set; }
-    public string    ProviderName    { get; set; } = default!;
-    public string    WebUrl          { get; set; } = default!;
-    public bool      IsActive        { get; set; }
-    public DateTime  CreatedAt       { get; set; }
-    public DateTime? LastSeenAtUtc   { get; set; }
-    public int       BranchRulesCount { get; set; }
+    public Guid     Id        { get; set; }
+    public string   Name      { get; set; } = default!;
+    public string   WebUrl    { get; set; } = default!;
+    public DateTime CreatedAt { get; set; }
 }
 
 public record DeleteRepositoryCommand : IRequest<Unit>
