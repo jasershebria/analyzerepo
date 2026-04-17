@@ -1,4 +1,7 @@
 using AnalyzeRepo.Api.Data.Infrastructure.Interceptors;
+using AnalyzeRepo.Api.Features.Providers.Infrastructure.ProviderClients;
+using AnalyzeRepo.Api.Features.Providers.Infrastructure.Plugins;
+using AnalyzeRepo.Api.Features.Repositories.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnalyzeRepo.Api.Data.Infrastructure;
@@ -12,13 +15,19 @@ public static class DependencyInjection
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<DomainEventsInterceptor>();
 
-        services.AddDbContext<AppDbContext>((sp, opts) =>
+        services.AddDbContext<ApplicationDbContext>((sp, opts) =>
         {
             opts.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             opts.AddInterceptors(
                 sp.GetRequiredService<AuditInterceptor>(),
                 sp.GetRequiredService<DomainEventsInterceptor>());
         });
+
+        services.AddScoped<IRepositoryLookupService, RepositoryLookupService>();
+        services.AddSingleton<RepoProviderClientFactory>(sp =>
+            new RepoProviderClientFactory(sp));
+        services.AddSingleton<ProviderResolver>(sp =>
+            new ProviderResolver(sp.GetServices<ISourceProviderPlugin>()));
 
         return services;
     }

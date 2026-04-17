@@ -1,4 +1,4 @@
-using AnalyzeRepo.Api.Data.Domain;
+using AnalyzeRepo.Api.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

@@ -36,7 +36,6 @@ builder.Services.Scan(scan => scan
 // ── External Services ─────────────────────────────────────────────────────────
 builder.Services.Configure<LlmOptions>(
     builder.Configuration.GetSection(LlmOptions.Section));
-builder.Services.AddHttpClient<IGitHubService, GitHubService>();
 builder.Services.AddHttpClient<ILlmService, OpenAiLlmService>();
 
 // ── FastEndpoints ─────────────────────────────────────────────────────────────
@@ -60,7 +59,7 @@ var app = builder.Build();
 // ── Apply EF Core migrations on startup ───────────────────────────────────────
 {
     using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
 }
 
