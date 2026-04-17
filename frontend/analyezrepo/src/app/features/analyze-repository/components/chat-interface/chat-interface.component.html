@@ -2,49 +2,48 @@
   <!-- Messages Area -->
   <div class="chat__messages">
 
-    <!-- Empty state -->
-    <div *ngIf="messages.length === 0" class="chat__empty">
-      <div class="chat__empty-icon">
-        <lucide-icon name="sparkles" [size]="32" class="chat__empty-sparkle"></lucide-icon>
-      </div>
-      <h3 class="chat__empty-title">Ready to Analyze</h3>
-      <p class="chat__empty-text">
-        {{ isConnected
-          ? "Ask me anything about your system's business logic, flows, or architecture"
-          : "Connect a repository to start asking questions about your codebase" }}
-      </p>
-      <div *ngIf="isConnected" class="chat__examples">
-        <p class="chat__examples-label">Example questions:</p>
-        <button
-          *ngFor="let q of exampleQuestions"
-          (click)="sendMessage(q)"
-          class="chat__example-btn"
-        >{{ q }}</button>
-      </div>
-    </div>
-
-    <!-- Message list -->
-    <ng-container *ngIf="messages.length > 0">
-      <div
-        *ngFor="let msg of messages; trackBy: trackByIndex"
-        @messageEnter
-        class="chat__message-row"
-        [class.chat__message-row--user]="msg.role === 'user'"
-      >
-        <div
-          class="chat__bubble"
-          [class.chat__bubble--user]="msg.role === 'user'"
-          [class.chat__bubble--assistant]="msg.role === 'assistant'"
-        >
-          <div *ngIf="msg.role === 'assistant'" class="chat__bubble-header">
-            <lucide-icon name="sparkles" [size]="14" class="chat__sparkle-icon"></lucide-icon>
-            <span class="chat__bubble-label">AI Assistant</span>
-          </div>
-          <div class="chat__bubble-content">{{ msg.content }}</div>
+    @if (messages().length === 0) {
+      <div class="chat__empty">
+        <div class="chat__empty-icon">
+          <lucide-icon name="sparkles" [size]="32" class="chat__empty-sparkle"></lucide-icon>
         </div>
+        <h3 class="chat__empty-title">Ready to Analyze</h3>
+        <p class="chat__empty-text">
+          Ask me anything about your system's business logic, flows, or architecture
+        </p>
+        @if (isConnected()) {
+          <div class="chat__examples">
+            <p class="chat__examples-label">Example questions:</p>
+            @for (q of exampleQuestions; track q) {
+              <button (click)="sendMessage(q)" class="chat__example-btn">{{ q }}</button>
+            }
+          </div>
+        }
       </div>
+    } @else {
+      @for (msg of messages(); track $index) {
+        <div
+          @messageEnter
+          class="chat__message-row"
+          [class.chat__message-row--user]="msg.role === 'user'"
+        >
+          <div
+            class="chat__bubble"
+            [class.chat__bubble--user]="msg.role === 'user'"
+            [class.chat__bubble--assistant]="msg.role === 'assistant'"
+          >
+            @if (msg.role === 'assistant') {
+              <div class="chat__bubble-header">
+                <lucide-icon name="sparkles" [size]="14" class="chat__sparkle-icon"></lucide-icon>
+                <span class="chat__bubble-label">AI Assistant</span>
+              </div>
+            }
+            <div class="chat__bubble-content">{{ msg.content }}</div>
+          </div>
+        </div>
+      }
       <div #messagesEnd></div>
-    </ng-container>
+    }
 
   </div>
 
@@ -52,18 +51,17 @@
   <div class="chat__input-area">
     <div class="chat__input-wrap">
       <textarea
-        [(ngModel)]="inputText"
+        [ngModel]="inputText()"
+        (ngModelChange)="inputText.set($event)"
         (keydown)="handleKeyDown($event)"
-        [disabled]="!isConnected"
-        [placeholder]="isConnected
-          ? 'Ask anything about your system (e.g., How does reservation flow work?)'
-          : 'Connect a repository to start chatting...'"
+        [disabled]="!isConnected()"
+        placeholder="Ask anything about your system (e.g., How does reservation flow work?)"
         rows="1"
         class="chat__textarea"
       ></textarea>
       <button
         (click)="sendMessage()"
-        [disabled]="!isConnected || !inputText.trim()"
+        [disabled]="!isConnected() || !inputText().trim()"
         class="chat__send-btn"
       >
         <lucide-icon name="send" [size]="18"></lucide-icon>

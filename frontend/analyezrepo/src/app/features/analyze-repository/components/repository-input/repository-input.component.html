@@ -1,69 +1,43 @@
-<div class="repo-input">
-  <div class="repo-input__heading">
-    <h2 class="repo-input__title">Connect Repository</h2>
-    <p class="repo-input__subtitle">
-      Connect your GitHub repository to start analyzing business logic
+@if (repositories().length > 0) {
+  <div class="repo-grid">
+    @for (repo of repositories(); track repo.id) {
+      <button (click)="selectRepo(repo)" class="repo-card">
+        <div class="repo-card__top">
+          <div class="repo-card__icon">
+            <lucide-icon name="github" [size]="24" class="repo-card__svg"></lucide-icon>
+          </div>
+          <div class="repo-card__info">
+            <h3 class="repo-card__name">{{ repo.name }}</h3>
+            <p class="repo-card__url">{{ repo.url.replace('https://', '') }}</p>
+          </div>
+        </div>
+        <p class="repo-card__date">Added {{ repo.addedAt | date }}</p>
+      </button>
+    }
+
+    <!-- Add new card -->
+    <button (click)="navigateToSettings()" class="repo-card repo-card--add">
+      <div class="repo-card--add__inner">
+        <div class="repo-card--add__icon">
+          <lucide-icon name="plus" [size]="24" class="repo-card--add__svg"></lucide-icon>
+        </div>
+        <span class="repo-card--add__label">Add Repository</span>
+      </div>
+    </button>
+  </div>
+} @else {
+  <!-- Empty State -->
+  <div class="repo-empty">
+    <div class="repo-empty__icon">
+      <lucide-icon name="folder-git-2" [size]="40" class="repo-empty__svg"></lucide-icon>
+    </div>
+    <h2 class="repo-empty__title">No Repositories Yet</h2>
+    <!-- <p class="repo-empty__text">
+      Start by adding a GitHub repository to analyze its business logic and generate flowcharts
     </p>
+    <button (click)="navigateToSettings()" class="repo-empty__btn">
+      <lucide-icon name="plus" [size]="20"></lucide-icon>
+      Add Your First Repository
+    </button> -->
   </div>
-
-  <div class="row g-3 align-items-end">
-    <!-- Repository URL -->
-    <div class="col-12 col-md-5">
-      <label class="repo-input__label">Repository URL</label>
-      <div class="input-wrap">
-        <lucide-icon name="github" [size]="16" class="input-wrap__icon"></lucide-icon>
-        <input
-          type="text"
-          [(ngModel)]="repoUrl"
-          placeholder="https://github.com/username/repo"
-          [disabled]="isConnected"
-          class="input-wrap__field"
-        />
-      </div>
-    </div>
-
-    <!-- Access Token -->
-    <div class="col-12 col-md-5">
-      <label class="repo-input__label">Access Token</label>
-      <div class="input-wrap">
-        <lucide-icon name="lock" [size]="16" class="input-wrap__icon"></lucide-icon>
-        <input
-          type="password"
-          [(ngModel)]="token"
-          placeholder="ghp_xxxxxxxxxxxx"
-          [disabled]="isConnected"
-          class="input-wrap__field"
-        />
-      </div>
-    </div>
-
-    <!-- Connect Button -->
-    <div class="col-12 col-md-2">
-      <div class="repo-input__actions">
-        <button
-          (click)="handleConnect()"
-          [disabled]="!canConnect"
-          class="connect-btn"
-          [class.connect-btn--connected]="isConnected"
-        >
-          <ng-container *ngIf="isLoading">
-            <span class="connect-btn__spinner"></span>
-            Connecting...
-          </ng-container>
-          <ng-container *ngIf="!isLoading && isConnected">
-            <lucide-icon name="check-circle-2" [size]="16"></lucide-icon>
-            Connected
-          </ng-container>
-          <ng-container *ngIf="!isLoading && !isConnected">
-            <lucide-icon name="github" [size]="16"></lucide-icon>
-            Connect
-          </ng-container>
-        </button>
-        <span *ngIf="isConnected" class="success-badge">
-          <lucide-icon name="check-circle-2" [size]="14"></lucide-icon>
-          Repository connected
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
+}

@@ -42,7 +42,6 @@ public class GetRepositoryHandler : IRequestHandler<GetRepositoryQuery, GetRepos
             {
                 Id              = br.Id,
                 Pattern         = br.Pattern,
-                DefaultScanMode = br.DefaultScanMode,
                 ScanOnPush      = br.ScanOnPush,
                 IsEnabled       = br.IsEnabled
             }).ToList()

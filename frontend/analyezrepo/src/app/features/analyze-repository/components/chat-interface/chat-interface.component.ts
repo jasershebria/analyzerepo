@@ -1,18 +1,14 @@
 import {
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
   AfterViewChecked,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
 } from '@angular/core';
-import {
-  animate,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { AnalysisStateService } from '../../services/analysis-state.service';
-import { Message } from '../../../../models/analysis.models';
 
 @Component({
   selector: 'app-chat-interface',
@@ -28,30 +24,28 @@ import { Message } from '../../../../models/analysis.models';
     ]),
   ],
 })
-export class ChatInterfaceComponent implements OnInit, AfterViewChecked {
+export class ChatInterfaceComponent implements AfterViewChecked {
   @ViewChild('messagesEnd') messagesEndRef!: ElementRef;
 
-  messages: Message[] = [];
-  isConnected = false;
-  inputText = '';
+  private readonly state = inject(AnalysisStateService);
+
+  readonly messages = this.state.messages;
+  readonly isConnected = this.state.isConnected;
+  readonly inputText = signal('');
+
   private shouldScroll = false;
 
-  exampleQuestions = [
+  readonly exampleQuestions = [
     'How does the reservation flow work?',
     'Explain the authentication process',
     'How does payment processing work?',
   ];
 
-  constructor(private analysisState: AnalysisStateService) {}
-
-  ngOnInit(): void {
-    this.analysisState.messages$.subscribe((msgs) => {
-      this.messages = msgs;
+  constructor() {
+    effect(() => {
+      this.messages();
       this.shouldScroll = true;
     });
-    this.analysisState.isConnected$.subscribe(
-      (connected) => (this.isConnected = connected)
-    );
   }
 
   ngAfterViewChecked(): void {
@@ -63,15 +57,15 @@ export class ChatInterfaceComponent implements OnInit, AfterViewChecked {
 
   private scrollToBottom(): void {
     try {
-      this.messagesEndRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      this.messagesEndRef?.nativeElement.scrollIntoView({ behavior: 'smooth' });
     } catch (_) {}
   }
 
   sendMessage(text?: string): void {
-    const msg = (text ?? this.inputText).trim();
-    if (!msg || !this.isConnected) return;
-    this.inputText = '';
-    this.analysisState.sendMessage(msg);
+    const msg = (text ?? this.inputText()).trim();
+    if (!msg || !this.isConnected()) return;
+    this.inputText.set('');
+    this.state.sendMessage(msg);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -79,9 +73,5 @@ export class ChatInterfaceComponent implements OnInit, AfterViewChecked {
       event.preventDefault();
       this.sendMessage();
     }
-  }
-
-  trackByIndex(index: number): number {
-    return index;
   }
 }

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+
+export type TabType = 'repositories' | 'github' | 'api' | 'notifications' | 'appearance';
 
 @Component({
   selector: 'app-settings',
@@ -7,20 +9,17 @@ import { Component } from '@angular/core';
   styleUrl: './settings.component.scss',
 })
 export class SettingsComponent {
-  githubToken = '';
-  selectedModel = 'GPT-4 Turbo';
-  analysisDepth = 5;
+  readonly activeTab = signal<TabType>('repositories');
 
-  notificationOptions = [
-    { label: 'Analysis complete notifications', checked: true },
-    { label: 'Weekly usage reports', checked: true },
-    { label: 'New feature announcements', checked: false },
+  readonly tabs: { id: TabType; label: string; icon: string }[] = [
+    { id: 'repositories',  label: 'Repositories', icon: 'folder-git-2' },
+    { id: 'github',        label: 'GitHub',        icon: 'github' },
+    { id: 'api',           label: 'API Config',    icon: 'key' },
+    { id: 'notifications', label: 'Notifications', icon: 'bell' },
+    { id: 'appearance',    label: 'Appearance',    icon: 'palette' },
   ];
 
-  aiModels = ['GPT-4 Turbo', 'GPT-4', 'Claude 3 Opus', 'Claude Sonnet 4.6'];
-
-  saveChanges(): void {
-    // Would call an API in a real implementation
-    console.log('Settings saved');
+  setTab(tab: TabType): void {
+    this.activeTab.set(tab);
   }
 }

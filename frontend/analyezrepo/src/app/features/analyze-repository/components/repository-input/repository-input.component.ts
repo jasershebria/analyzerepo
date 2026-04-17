@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { AnalysisStateService } from '../../services/analysis-state.service';
+import { Component, inject, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { Repository } from '../../../../models/analysis.models';
 
 @Component({
   selector: 'app-repository-input',
@@ -8,27 +9,19 @@ import { AnalysisStateService } from '../../services/analysis-state.service';
   styleUrl: './repository-input.component.scss',
 })
 export class RepositoryInputComponent {
-  repoUrl = '';
-  token = '';
-  isLoading = false;
-  isConnected = false;
+  private readonly router = inject(Router);
 
-  constructor(private analysisState: AnalysisStateService) {
-    this.analysisState.isConnected$.subscribe(
-      (connected) => (this.isConnected = connected)
-    );
+  readonly repoSelected = output<Repository>();
+
+  readonly repositories = signal<Repository[]>(
+    JSON.parse(localStorage.getItem('repositories') ?? '[]')
+  );
+
+  selectRepo(repo: Repository): void {
+    this.repoSelected.emit(repo);
   }
 
-  handleConnect(): void {
-    if (!this.repoUrl || !this.token || this.isConnected) return;
-    this.isLoading = true;
-    setTimeout(() => {
-      this.analysisState.connect(this.repoUrl, this.token);
-      this.isLoading = false;
-    }, 1500);
-  }
-
-  get canConnect(): boolean {
-    return !!this.repoUrl && !!this.token && !this.isConnected && !this.isLoading;
+  navigateToSettings(): void {
+    this.router.navigate(['/settings']);
   }
 }

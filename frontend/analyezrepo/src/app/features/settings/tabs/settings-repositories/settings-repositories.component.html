@@ -1,0 +1,63 @@
+<div class="settings-card">
+  <div class="settings-card__header">
+    <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+      <lucide-icon name="github" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+    </div>
+    <div class="settings-card__header-text">
+      <h2 class="settings-card__title">Connected Repositories</h2>
+      <p class="settings-card__desc">Manage your connected GitHub repositories</p>
+    </div>
+    <button (click)="navigateToAddRepo()" class="add-repo-btn">
+      <lucide-icon name="plus" [size]="16"></lucide-icon>
+      Add Repository
+    </button>
+  </div>
+
+  @if (repositories().length > 0) {
+    <div class="settings-card__body settings-card__body--no-gap">
+      <table class="repo-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th>URL</th>
+            <th>Added</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (repo of repositories(); track repo.id) {
+            <tr>
+              <td>
+                <div class="repo-table__name">
+                  <lucide-icon name="github" [size]="16" class="settings-card__icon"></lucide-icon>
+                  {{ repo.name }}
+                </div>
+              </td>
+              <td>
+                <a [href]="repo.url" target="_blank" rel="noopener noreferrer" class="repo-table__url">
+                  {{ repo.url.replace('https://', '') }}
+                  <lucide-icon name="external-link" [size]="12"></lucide-icon>
+                </a>
+              </td>
+              <td class="repo-table__date">{{ repo.addedAt | date }}</td>
+              <td class="text-right">
+                <button (click)="deleteRepo(repo.id)" class="repo-table__delete">
+                  <lucide-icon name="trash-2" [size]="16"></lucide-icon>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="empty-repos">
+      <lucide-icon name="github" [size]="48" class="empty-repos__icon"></lucide-icon>
+      <p class="empty-repos__text">No repositories connected yet</p>
+      <button (click)="navigateToAddRepo()" class="empty-repos__btn">
+        <lucide-icon name="plus" [size]="16"></lucide-icon>
+        Add Your First Repository
+      </button>
+    </div>
+  }
+</div>

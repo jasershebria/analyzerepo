@@ -1,0 +1,32 @@
+<div class="settings-card">
+  <div class="settings-card__header">
+    <div class="settings-card__icon-wrap">
+      <lucide-icon name="palette" [size]="18" class="settings-card__icon"></lucide-icon>
+    </div>
+    <div>
+      <h2 class="settings-card__title">Appearance</h2>
+      <p class="settings-card__desc">Customize your application theme</p>
+    </div>
+  </div>
+  <div class="settings-card__body">
+    <button
+      (click)="activeTheme.set('dark')"
+      [class.theme-btn--active]="activeTheme() === 'dark'"
+      class="theme-btn"
+    >
+      Dark Mode
+    </button>
+    <button
+      (click)="activeTheme.set('light')"
+      [class.theme-btn--active]="activeTheme() === 'light'"
+      class="theme-btn"
+    >
+      Light Mode
+    </button>
+  </div>
+</div>
+
+<button (click)="saveChanges()" class="save-btn">
+  <lucide-icon name="save" [size]="16"></lucide-icon>
+  <span>Save Changes</span>
+</button>

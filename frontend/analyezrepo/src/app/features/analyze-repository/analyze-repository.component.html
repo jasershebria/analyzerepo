@@ -1,16 +1,43 @@
-<div class="analyze-page">
-  <!-- Repository Input -->
-  <div class="analyze-page__header">
-    <app-repository-input></app-repository-input>
-  </div>
+@if (!selectedRepo()) {
+  <!-- Repository Selection View -->
+  <div class="repo-select-view">
+    <div class="repo-select-view__inner">
+      <div class="repo-select-view__header">
+        <h1 class="repo-select-view__title">Analyze Repository</h1>
+        <p class="repo-select-view__subtitle">Select a repository to start analyzing its business logic</p>
+      </div>
 
-  <!-- Split Panel -->
-  <div class="analyze-page__body">
-    <div class="analyze-page__chat">
-      <app-chat-interface></app-chat-interface>
-    </div>
-    <div class="analyze-page__output">
-      <app-output-panel></app-output-panel>
+
+      <app-repository-input (repoSelected)="selectRepo($event)" />
     </div>
   </div>
-</div>
+} @else {
+  <!-- Chat View -->
+  <div class="analyze-page">
+    <!-- Repo Header Bar -->
+    <div class="analyze-page__header">
+      <div class="repo-header">
+        <div class="repo-header__icon">
+          <lucide-icon name="github" [size]="20" class="repo-header__svg"></lucide-icon>
+        </div>
+        <div>
+          <p class="repo-header__name">{{ selectedRepo()!.name }}</p>
+          <p class="repo-header__url">{{ selectedRepo()!.url.replace('https://', '') }}</p>
+        </div>
+      </div>
+      <button (click)="deselectRepo()" class="change-repo-btn">
+        Change Repository
+      </button>
+    </div>
+
+    <!-- Split Panel -->
+    <div class="analyze-page__body">
+      <div class="analyze-page__chat">
+        <app-chat-interface />
+      </div>
+      <div class="analyze-page__output">
+        <app-output-panel />
+      </div>
+    </div>
+  </div>
+}

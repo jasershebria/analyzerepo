@@ -1,5 +1,32 @@
 @import 'app/variables';
 
+// ── Selection View ────────────────────────────────────
+.repo-select-view {
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.repo-select-view__inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.repo-select-view__header {
+  margin-bottom: 2rem;
+}
+
+.repo-select-view__title {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.repo-select-view__subtitle {
+  color: $text-muted;
+  font-size: 0.9375rem;
+}
+
+// ── Chat View Layout ──────────────────────────────────
 .analyze-page {
   display: flex;
   flex-direction: column;
@@ -7,7 +34,10 @@
 }
 
 .analyze-page__header {
-  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid $border-color;
   flex-shrink: 0;
 }
@@ -33,11 +63,51 @@
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 1200px) {
-    width: 440px;
-  }
+  @media (max-width: 1200px) { width: 440px; }
+  @media (max-width: 900px)  { display: none; }
+}
 
-  @media (max-width: 900px) {
-    display: none;
-  }
+// ── Repo Header Bar ───────────────────────────────────
+.repo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.repo-header__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius;
+  background: $accent-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.repo-header__svg {
+  color: #ffffff;
+}
+
+.repo-header__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.repo-header__url {
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.change-repo-btn {
+  padding: 0.5rem 1rem;
+  background-color: $bg-card;
+  color: $text-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  font-size: 0.875rem;
+  transition: border-color $transition;
+
+  &:hover { border-color: $border-color-2; }
 }

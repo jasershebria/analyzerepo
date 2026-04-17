@@ -16,8 +16,6 @@ public class BranchTrackingRuleConfiguration : IEntityTypeConfiguration<BranchTr
         builder.Property(br => br.Pattern).IsRequired().HasMaxLength(200);
         builder.Property(br => br.IsEnabled).IsRequired().HasDefaultValue(true);
         builder.Property(br => br.ScanOnPush).IsRequired().HasDefaultValue(true);
-        builder.Property(br => br.ScanOnSchedule).IsRequired().HasDefaultValue(false);
-        builder.Property(br => br.DefaultScanMode).IsRequired().HasConversion<int>().HasDefaultValue(ScanMode.Full);
         builder.Property(br => br.CreatedAt).IsRequired();
         builder.Property(br => br.UpdatedAt);
         builder.Property(br => br.DeletedAt);

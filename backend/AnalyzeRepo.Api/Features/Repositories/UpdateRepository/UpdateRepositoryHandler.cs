@@ -47,13 +47,12 @@ public sealed class UpdateRepositoryHandler : IRequestHandler<UpdateRepositoryCo
             if (existing != null)
             {
                 existing.SetPattern(pattern);
-                existing.SetDefaultScanMode(dto.Mode);
                 existing.SetScanOnPush(dto.ScanOnPush);
                 existing.SetEnabled(true);
             }
             else
             {
-                repo.AddBranchRule(pattern, dto.Mode, dto.ScanOnPush);
+                repo.AddBranchRule(pattern, dto.ScanOnPush);
             }
         }
 

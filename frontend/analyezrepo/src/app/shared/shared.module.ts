@@ -42,6 +42,9 @@ import {
   Key,
   Bell,
   Palette,
+  FolderGit2,
+  Plus,
+  ExternalLink,
 } from 'lucide-angular';
 
 const LUCIDE_ICONS = {
@@ -83,6 +86,9 @@ const LUCIDE_ICONS = {
   Key,
   Bell,
   Palette,
+  FolderGit2,
+  Plus,
+  ExternalLink,
 };
 
 @NgModule({

@@ -21,7 +21,6 @@ public record CreateRepositoryCommand : IRequest<CreateRepositoryResponse>
 public record BranchRule
 {
     public string   Pattern    { get; set; } = default!;
-    public ScanMode Mode       { get; set; } = ScanMode.Hybrid;
     public bool     ScanOnPush { get; set; } = true;
 }
 
@@ -115,7 +114,6 @@ public record BranchRuleDto
 {
     public Guid     Id              { get; set; }
     public string   Pattern         { get; set; } = default!;
-    public ScanMode DefaultScanMode { get; set; }
     public bool     ScanOnPush      { get; set; }
     public bool     IsEnabled       { get; set; }
 }

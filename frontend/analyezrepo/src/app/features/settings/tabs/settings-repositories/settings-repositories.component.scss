@@ -1,0 +1,109 @@
+@import 'app/features/settings/tabs/settings-shared';
+
+.add-repo-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: $accent-gradient-r;
+  color: #ffffff;
+  border-radius: $radius;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity $transition;
+  flex-shrink: 0;
+
+  &:hover { opacity: 0.9; }
+}
+
+.repo-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: $text-muted;
+    border-bottom: 1px solid $border-color;
+
+    &.text-right { text-align: right; }
+  }
+
+  td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid $border-color;
+    font-size: 0.875rem;
+    transition: background-color $transition;
+
+    &.text-right { text-align: right; }
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background-color: $bg-primary; }
+}
+
+.repo-table__name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $text-primary;
+  font-weight: 500;
+}
+
+.repo-table__url {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: $text-muted;
+  font-size: 0.8125rem;
+  transition: color $transition;
+
+  &:hover { color: $accent; }
+}
+
+.repo-table__date { color: $text-muted; }
+
+.repo-table__delete {
+  color: $text-muted;
+  background: none;
+  padding: 0.25rem;
+  transition: color $transition;
+
+  &:hover { color: #ef4444; }
+}
+
+.empty-repos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.empty-repos__icon {
+  color: $border-color-2;
+  margin-bottom: 0.75rem;
+}
+
+.empty-repos__text {
+  color: $text-muted;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+.empty-repos__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  background-color: $bg-card-hover;
+  color: $text-primary;
+  border-radius: $radius;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color $transition;
+
+  &:hover { background-color: $border-color-2; }
+}

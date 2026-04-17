@@ -50,7 +50,6 @@ public class CreateRepositoryValidator : Validator<CreateRepositoryCommand>
         RuleForEach(x => x.BranchRules).ChildRules(rule =>
         {
             rule.RuleFor(r => r.Pattern).NotEmpty().MaximumLength(200);
-            rule.RuleFor(r => r.Mode).IsInEnum();
         });
     }
 }

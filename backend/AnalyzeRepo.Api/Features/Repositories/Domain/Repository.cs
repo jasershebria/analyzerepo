@@ -27,7 +27,7 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
         string defaultBranch,
         AuthType authType,
         string secretRef,
-        IEnumerable<(string Pattern, ScanMode Mode, bool ScanOnPush)> branchRules,
+        IEnumerable<(string Pattern, bool ScanOnPush)> branchRules,
         bool runInitialScan = false)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -51,17 +51,14 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
         repo.SetAuth(authType, secretRef);
 
         foreach (var rule in branchRules)
-            repo.AddBranchRule(rule.Pattern, rule.Mode, rule.ScanOnPush);
+            repo.AddBranchRule(rule.Pattern, rule.ScanOnPush);
 
         var branchTrackings = repo.BranchRules.Select(r => new BranchTracking
         {
             RepositoryId    = r.RepositoryId,
             Pattern         = r.Pattern,
             IsEnabled       = r.IsEnabled,
-            ScanOnPush      = r.ScanOnPush,
-            ScanOnSchedule  = r.ScanOnSchedule,
-            Cron            = r.Cron,
-            DefaultScanMode = r.DefaultScanMode,
+            ScanOnPush      = r.ScanOnPush
         }).ToList();
 
         repo.AddDomainEvent(new RepositoryCreatedEvent(
@@ -120,7 +117,7 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
 
     public void TouchSeenNow() => LastSeenAtUtc = DateTime.UtcNow;
 
-    public BranchTrackingRule AddBranchRule(string pattern, ScanMode mode = ScanMode.Hybrid, bool scanOnPush = true)
+    public BranchTrackingRule AddBranchRule(string pattern ,bool scanOnPush = true)
     {
         pattern = (pattern ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(pattern))
@@ -129,12 +126,12 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
         if (BranchRules.Any(x => x.Pattern.Equals(pattern, StringComparison.OrdinalIgnoreCase)))
             throw new InvalidOperationException($"Branch rule '{pattern}' already exists.");
 
-        var rule = new BranchTrackingRule(Id, pattern, mode, scanOnPush);
+        var rule = new BranchTrackingRule(Id, pattern,scanOnPush);
         BranchRules.Add(rule);
         return rule;
     }
 
-    public void UpdateBranchRule(Guid ruleId, string pattern, ScanMode mode, bool scanOnPush, bool isEnabled, bool scanOnSchedule = false, string? cron = null)
+    public void UpdateBranchRule(Guid ruleId, string pattern, bool scanOnPush, bool isEnabled, bool scanOnSchedule = false, string? cron = null)
     {
         var rule = BranchRules.FirstOrDefault(x => x.Id == ruleId)
                    ?? throw new KeyNotFoundException("Branch rule not found.");
@@ -148,10 +145,8 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
             throw new InvalidOperationException($"Branch rule '{pattern}' already exists.");
 
         rule.SetPattern(pattern);
-        rule.SetDefaultScanMode(mode);
         rule.SetScanOnPush(scanOnPush);
         rule.SetEnabled(isEnabled);
-        rule.SetSchedule(scanOnSchedule, scanOnSchedule ? cron : null);
     }
 
     public void RemoveBranchRule(Guid ruleId)
@@ -169,13 +164,4 @@ public sealed class Repository : FullAuditedAggregateRoot<Guid>
         return BranchRules.Any(r => r.IsEnabled && r.ScanOnPush && BranchPatternMatcher.IsMatch(r.Pattern, branchName));
     }
 
-    public ScanMode GetScanModeForBranch(string branchName)
-    {
-        branchName = (branchName ?? string.Empty).Trim();
-        var rule = BranchRules
-            .Where(r => r.IsEnabled && BranchPatternMatcher.IsMatch(r.Pattern, branchName))
-            .OrderByDescending(r => r.Pattern.Length)
-            .FirstOrDefault();
-        return rule?.DefaultScanMode ?? ScanMode.Hybrid;
-    }
 }

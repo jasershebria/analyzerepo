@@ -1,3 +1,11 @@
+export interface Repository {
+  id: string;
+  name: string;
+  url: string;
+  token?: string;
+  addedAt: string;
+}
+
 export interface Message {
   role: 'user' | 'assistant';
   content: string;

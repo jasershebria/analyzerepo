@@ -40,7 +40,4 @@ public sealed class BranchTracking
     public string   Pattern         { get; set; } = string.Empty;
     public bool     IsEnabled       { get; set; } = true;
     public bool     ScanOnPush      { get; set; }
-    public bool     ScanOnSchedule  { get; set; }
-    public string?  Cron            { get; set; }
-    public ScanMode DefaultScanMode { get; set; }
 }

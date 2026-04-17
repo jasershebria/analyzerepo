@@ -1,0 +1,27 @@
+<div class="settings-card">
+  <div class="settings-card__header">
+    <div class="settings-card__icon-wrap">
+      <lucide-icon name="github" [size]="18" class="settings-card__icon"></lucide-icon>
+    </div>
+    <div>
+      <h2 class="settings-card__title">GitHub Integration</h2>
+      <p class="settings-card__desc">Manage your GitHub access tokens</p>
+    </div>
+  </div>
+  <div class="settings-card__body">
+    <label class="field-label">Personal Access Token</label>
+    <input
+      type="password"
+      [ngModel]="githubToken()"
+      (ngModelChange)="githubToken.set($event)"
+      placeholder="ghp_xxxxxxxxxxxx"
+      class="field-input"
+    />
+    <p class="field-hint">Required scopes: repo, read:org</p>
+  </div>
+</div>
+
+<button (click)="saveChanges()" class="save-btn">
+  <lucide-icon name="save" [size]="16"></lucide-icon>
+  <span>Save Changes</span>
+</button>

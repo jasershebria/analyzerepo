@@ -1,0 +1,48 @@
+<div class="settings-card">
+  <div class="settings-card__header">
+    <div class="settings-card__icon-wrap">
+      <lucide-icon name="key" [size]="18" class="settings-card__icon"></lucide-icon>
+    </div>
+    <div>
+      <h2 class="settings-card__title">API Configuration</h2>
+      <p class="settings-card__desc">Configure AI model and analysis settings</p>
+    </div>
+  </div>
+  <div class="settings-card__body">
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <label class="field-label">AI Model</label>
+        <select
+          [ngModel]="selectedModel()"
+          (ngModelChange)="selectedModel.set($event)"
+          class="field-select"
+        >
+          @for (model of aiModels; track model) {
+            <option [value]="model">{{ model }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="field-label">Max Analysis Depth</label>
+        <input
+          type="range"
+          [ngModel]="analysisDepth()"
+          (ngModelChange)="analysisDepth.set(+$event)"
+          min="1"
+          max="10"
+          class="field-range"
+        />
+        <div class="range-labels">
+          <span>Shallow</span>
+          <span class="range-value">{{ analysisDepth() }}</span>
+          <span>Deep</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button (click)="saveChanges()" class="save-btn">
+  <lucide-icon name="save" [size]="16"></lucide-icon>
+  <span>Save Changes</span>
+</button>

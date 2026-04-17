@@ -34,7 +34,7 @@ public class CreateRepositoryHandler : IRequestHandler<CreateRepositoryCommand, 
             defaultBranch: request.DefaultBranch,
             authType:      request.AuthenticationType,
             secretRef:     request.SecretRef,
-            branchRules:   request.BranchRules.Select(r => (r.Pattern, r.Mode, r.ScanOnPush)),
+            branchRules:   request.BranchRules.Select(r => (r.Pattern, r.ScanOnPush)),
             runInitialScan: request.RunInitialScan
         );
 

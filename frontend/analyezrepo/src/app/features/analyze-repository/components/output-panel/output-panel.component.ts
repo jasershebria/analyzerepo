@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { AnalysisStateService } from '../../services/analysis-state.service';
-import { AnalysisData } from '../../../../models/analysis.models';
 
 @Component({
   selector: 'app-output-panel',
@@ -8,20 +7,23 @@ import { AnalysisData } from '../../../../models/analysis.models';
   templateUrl: './output-panel.component.html',
   styleUrl: './output-panel.component.scss',
 })
-export class OutputPanelComponent implements OnInit {
-  data: AnalysisData | null = null;
-  activeTab: 'flow' | 'chart' | 'code' = 'flow';
+export class OutputPanelComponent {
+  private readonly state = inject(AnalysisStateService);
 
-  constructor(private analysisState: AnalysisStateService) {}
+  readonly data = this.state.analysisData;
+  readonly activeTab = signal<'flow' | 'chart' | 'code'>('flow');
 
-  ngOnInit(): void {
-    this.analysisState.analysisData$.subscribe((d) => {
-      this.data = d;
-      if (d) this.activeTab = 'flow';
+  readonly steps = computed(() => this.data()?.steps ?? []);
+  readonly mermaidCode = computed(() => this.data()?.mermaidCode ?? '');
+  readonly codeReferences = computed(() => this.data()?.codeReferences ?? []);
+
+  constructor() {
+    effect(() => {
+      if (this.data()) this.activeTab.set('flow');
     });
   }
 
   setTab(tab: 'flow' | 'chart' | 'code'): void {
-    this.activeTab = tab;
+    this.activeTab.set(tab);
   }
 }

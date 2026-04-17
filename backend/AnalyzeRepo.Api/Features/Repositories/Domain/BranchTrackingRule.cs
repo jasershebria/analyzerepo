@@ -9,16 +9,12 @@ public sealed class BranchTrackingRule : FullAuditedEntity<Guid>
     public string  Pattern        { get; private set; } = string.Empty;
     public bool    IsEnabled      { get; private set; } = true;
     public bool    ScanOnPush     { get; private set; }
-    public bool    ScanOnSchedule { get; private set; }
-    public string? Cron           { get; private set; }
-    public ScanMode DefaultScanMode { get; private set; }
 
     private BranchTrackingRule() { }
 
     public BranchTrackingRule(
         Guid repositoryId,
         string pattern,
-        ScanMode scanMode = ScanMode.Full,
         bool scanOnPush = true)
         : base()
     {
@@ -28,10 +24,8 @@ public sealed class BranchTrackingRule : FullAuditedEntity<Guid>
         Id              = Guid.NewGuid();
         RepositoryId    = repositoryId;
         Pattern         = NormalizePattern(pattern);
-        DefaultScanMode = scanMode;
         ScanOnPush      = scanOnPush;
         IsEnabled       = true;
-        ScanOnSchedule  = false;
         CreatedAt       = DateTime.UtcNow;
         CreatedBy       = "system";
         UpdatedAt       = DateTime.UtcNow;
@@ -56,20 +50,7 @@ public sealed class BranchTrackingRule : FullAuditedEntity<Guid>
         ScanOnPush = scanOnPush;
     }
 
-    public void SetDefaultScanMode(ScanMode mode)
-    {
-        if (DefaultScanMode == mode) return;
-        DefaultScanMode = mode;
-    }
 
-    public void SetSchedule(bool enabled, string? cron)
-    {
-        if (enabled && string.IsNullOrWhiteSpace(cron))
-            throw new ArgumentException("Cron expression is required when schedule is enabled", nameof(cron));
-
-        ScanOnSchedule = enabled;
-        Cron           = enabled ? cron?.Trim() : null;
-    }
 
     public bool MatchesBranch(string branchName)
     {
@@ -78,13 +59,6 @@ public sealed class BranchTrackingRule : FullAuditedEntity<Guid>
     }
 
     private static string NormalizePattern(string pattern) => pattern.Trim();
-}
-
-public enum ScanMode
-{
-    Full   = 1,
-    Diff   = 2,
-    Hybrid = 3
 }
 
 public static class BranchPatternMatcher
