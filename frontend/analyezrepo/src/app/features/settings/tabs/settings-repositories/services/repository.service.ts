@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PagedResult, RepositoryDto, CreateRepositoryCommand, CreateRepositoryResponse, TestConnectionRequest, TestConnectionResponse } from '../../../../../models/analysis.models';
+import { PagedResult, RepositoryDto, CreateRepositoryCommand, CreateRepositoryResponse, TestConnectionRequest, TestConnectionResponse, GetRepositoryResponse } from '../../../../../models/analysis.models';
 import { environment } from '../../../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +18,10 @@ export class RepositoryService {
 
   testConnection(request: TestConnectionRequest): Observable<TestConnectionResponse> {
     return this.http.post<TestConnectionResponse>(`${environment.apiBase}/api/repositories/test-connection`, request);
+  }
+
+  getById(id: string): Observable<GetRepositoryResponse> {
+    return this.http.get<GetRepositoryResponse>(`${environment.apiBase}/api/repositories/${id}`);
   }
 
   delete(id: string): Observable<void> {

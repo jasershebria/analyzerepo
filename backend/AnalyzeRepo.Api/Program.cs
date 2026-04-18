@@ -1,6 +1,7 @@
 using AnalyzeRepo.Api.Data.Application.Behaviors;
 using AnalyzeRepo.Api.Data.Infrastructure;
 using AnalyzeRepo.Api.Features.Providers.Infrastructure.Plugins;
+using AnalyzeRepo.Api.Features.Shared.AI;
 using AnalyzeRepo.Api.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -38,6 +39,9 @@ builder.Services.Scan(scan => scan
 builder.Services.Configure<LlmOptions>(
     builder.Configuration.GetSection(LlmOptions.Section));
 builder.Services.AddHttpClient<ILlmService, OpenAiLlmService>();
+
+// ── Semantic Kernel / AI ──────────────────────────────────────────────────────
+builder.Services.AddAIServices(builder.Configuration);
 
 
 // ── Plugin system ─────────────────────────────────────────────────────────────

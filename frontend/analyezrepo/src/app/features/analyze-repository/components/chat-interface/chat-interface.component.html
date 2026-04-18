@@ -42,6 +42,21 @@
           </div>
         </div>
       }
+      @if (isTyping()) {
+        <div @messageEnter class="chat__message-row">
+          <div class="chat__bubble chat__bubble--assistant">
+            <div class="chat__bubble-header">
+              <lucide-icon name="sparkles" [size]="14" class="chat__sparkle-icon"></lucide-icon>
+              <span class="chat__bubble-label">AI Assistant</span>
+            </div>
+            <div class="chat__typing">
+              <span class="chat__typing-dot"></span>
+              <span class="chat__typing-dot"></span>
+              <span class="chat__typing-dot"></span>
+            </div>
+          </div>
+        </div>
+      }
       <div #messagesEnd></div>
     }
 
@@ -54,14 +69,14 @@
         [ngModel]="inputText()"
         (ngModelChange)="inputText.set($event)"
         (keydown)="handleKeyDown($event)"
-        [disabled]="!isConnected()"
+        [disabled]="!isConnected() || isTyping()"
         placeholder="Ask anything about your system (e.g., How does reservation flow work?)"
         rows="1"
         class="chat__textarea"
       ></textarea>
       <button
         (click)="sendMessage()"
-        [disabled]="!isConnected() || !inputText().trim()"
+        [disabled]="!isConnected() || isTyping() || !inputText().trim()"
         class="chat__send-btn"
       >
         <lucide-icon name="send" [size]="18"></lucide-icon>

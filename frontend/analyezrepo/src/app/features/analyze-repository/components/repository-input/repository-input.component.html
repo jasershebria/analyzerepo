@@ -1,4 +1,12 @@
-@if (repositories().length > 0) {
+@if (loading()) {
+  <div class="repo-empty">
+    <p class="repo-empty__text">Loading repositories…</p>
+  </div>
+} @else if (error()) {
+  <div class="repo-empty">
+    <p class="repo-empty__text">Failed to load repositories. Please try again.</p>
+  </div>
+} @else if (repositories().length > 0) {
   <div class="repo-grid">
     @for (repo of repositories(); track repo.id) {
       <button (click)="selectRepo(repo)" class="repo-card">
@@ -8,10 +16,10 @@
           </div>
           <div class="repo-card__info">
             <h3 class="repo-card__name">{{ repo.name }}</h3>
-            <p class="repo-card__url">{{ repo.url.replace('https://', '') }}</p>
+            <p class="repo-card__url">{{ repo.webUrl.replace('https://', '') }}</p>
           </div>
         </div>
-        <p class="repo-card__date">Added {{ repo.addedAt | date }}</p>
+        <p class="repo-card__date">Added {{ repo.createdAt | date }}</p>
       </button>
     }
 
@@ -32,12 +40,5 @@
       <lucide-icon name="folder-git-2" [size]="40" class="repo-empty__svg"></lucide-icon>
     </div>
     <h2 class="repo-empty__title">No Repositories Yet</h2>
-    <!-- <p class="repo-empty__text">
-      Start by adding a GitHub repository to analyze its business logic and generate flowcharts
-    </p>
-    <button (click)="navigateToAddRepo()" class="repo-empty__btn">
-      <lucide-icon name="plus" [size]="20"></lucide-icon>
-      Add Your First Repository
-    </button> -->
   </div>
 }

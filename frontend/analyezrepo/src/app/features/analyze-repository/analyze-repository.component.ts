@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { Repository } from '../../models/analysis.models';
-import { AnalysisStateService } from './services/analysis-state.service';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { RepositoryDto } from '../../models/analysis.models';
 
 @Component({
   selector: 'app-analyze-repository',
@@ -9,17 +9,9 @@ import { AnalysisStateService } from './services/analysis-state.service';
   styleUrl: './analyze-repository.component.scss',
 })
 export class AnalyzeRepositoryComponent {
-  private readonly state = inject(AnalysisStateService);
+  private readonly router = inject(Router);
 
-  readonly selectedRepo = signal<Repository | null>(null);
-
-  selectRepo(repo: Repository): void {
-    this.selectedRepo.set(repo);
-    this.state.connect(repo);
-  }
-
-  deselectRepo(): void {
-    this.selectedRepo.set(null);
-    this.state.reset();
+  selectRepo(dto: RepositoryDto): void {
+    this.router.navigate(['/analyze', dto.id]);
   }
 }

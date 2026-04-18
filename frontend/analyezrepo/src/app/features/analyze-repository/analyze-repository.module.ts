@@ -9,10 +9,12 @@ import { FlowchartViewerComponent } from './components/output-panel/flowchart-vi
 import { CodeReferencesComponent } from './components/output-panel/code-references/code-references.component';
 import { AnalysisStateService } from './services/analysis-state.service';
 import { SharedModule } from '../../shared/shared.module';
+import { RepoSessionComponent } from './components/repo-session/repo-session.component';
 
 @NgModule({
   declarations: [
     AnalyzeRepositoryComponent,
+    RepoSessionComponent,
     RepositoryInputComponent,
     ChatInterfaceComponent,
     OutputPanelComponent,

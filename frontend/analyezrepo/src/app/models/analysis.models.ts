@@ -73,6 +73,46 @@ export interface PagedResult<T> {
   items: T[];
 }
 
+export interface AiChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface AiChatHistoryRequest {
+  messages: AiChatMessage[];
+  systemPrompt?: string;
+}
+
+export interface AiChatResponse {
+  reply: string;
+}
+
+export interface BranchRuleDto {
+  id: string;
+  pattern: string;
+  scanOnPush: boolean;
+  isEnabled: boolean;
+}
+
+export interface GetRepositoryResponse {
+  id: string;
+  name: string;
+  providerId: string;
+  webUrl: string;
+  cloneUrl: string;
+  defaultBranch: string;
+  providerRepoId?: string;
+  providerWorkspaceId?: string;
+  isActive: boolean;
+  lastSeenAtUtc?: string;
+  createdAt: string;
+  updatedAt?: string;
+  isDeleted: boolean;
+  authenticationType?: number;
+  secretRef?: string;
+  branchRules: BranchRuleDto[];
+}
+
 export interface Message {
   role: 'user' | 'assistant';
   content: string;

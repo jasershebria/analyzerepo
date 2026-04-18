@@ -31,6 +31,7 @@ export class ChatInterfaceComponent implements AfterViewChecked {
 
   readonly messages = this.state.messages;
   readonly isConnected = this.state.isConnected;
+  readonly isTyping = this.state.isTyping;
   readonly inputText = signal('');
 
   private shouldScroll = false;

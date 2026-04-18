@@ -1,0 +1,38 @@
+@if (loading()) {
+  <div class="session-loading">
+    <p class="session-loading__text">Loading repository…</p>
+  </div>
+} @else if (error()) {
+  <div class="session-loading">
+    <p class="session-loading__text">Repository not found.</p>
+    <button (click)="goBack()" class="change-repo-btn">Go Back</button>
+  </div>
+} @else if (repo()) {
+  <div class="analyze-page">
+    <!-- Repo Header Bar -->
+    <div class="analyze-page__header">
+      <div class="repo-header">
+        <div class="repo-header__icon">
+          <lucide-icon name="github" [size]="20" class="repo-header__svg"></lucide-icon>
+        </div>
+        <div>
+          <p class="repo-header__name">{{ repo()!.name }}</p>
+          <p class="repo-header__url">{{ repo()!.webUrl.replace('https://', '') }}</p>
+        </div>
+      </div>
+      <button (click)="goBack()" class="change-repo-btn">
+        Change Repository
+      </button>
+    </div>
+
+    <!-- Split Panel -->
+    <div class="analyze-page__body">
+      <div class="analyze-page__chat">
+        <app-chat-interface />
+      </div>
+      <div class="analyze-page__output">
+        <app-output-panel />
+      </div>
+    </div>
+  </div>
+}
