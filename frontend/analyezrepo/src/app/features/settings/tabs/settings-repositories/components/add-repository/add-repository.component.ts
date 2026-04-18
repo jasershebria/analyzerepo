@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormArray, Validators } from '@angular/forms';
 import { RepositoryService } from '../../services/repository.service';
 import { ProviderService } from '../../services/provider.service';
-import { ProviderDto } from '../../../../../../models/analysis.models';
+import { ProviderDto, TestConnectionResponse } from '../../../../../../models/analysis.models';
 
 @Component({
   selector: 'app-add-repository',
@@ -21,6 +21,17 @@ export class AddRepositoryComponent implements OnInit {
   errorMessage = '';
   providers: ProviderDto[] = [];
 
+  connectionStatus: 'idle' | 'testing' | 'success' | 'error' = 'idle';
+  connectionError = '';
+  connectionResult: TestConnectionResponse | null = null;
+  branches: string[] = [];
+
+  private readonly authTypeStrMap: Record<number, string> = {
+    1: 'token',
+    2: 'oauth',
+    3: 'app',
+  };
+
   readonly authTypes = [
     { value: 1, label: 'Personal Access Token' },
     { value: 2, label: 'OAuth' },
@@ -35,7 +46,7 @@ export class AddRepositoryComponent implements OnInit {
     secretRef: ['', [Validators.required, Validators.maxLength(500)]],
     branchRules: this.fb.array([
       this.fb.group({
-        pattern: ['main', [Validators.required, Validators.maxLength(200)]],
+        pattern: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(200)]],
         scanOnPush: [true],
       }),
     ]),
@@ -46,16 +57,88 @@ export class AddRepositoryComponent implements OnInit {
       next: (result) => (this.providers = result.items as ProviderDto[]),
       error: () => (this.errorMessage = 'Failed to load providers.'),
     });
+
+    // Reset connection when auth fields change
+    const authFields = ['providerId', 'webUrl', 'authenticationType', 'secretRef'];
+    authFields.forEach(field => {
+      this.form.get(field)!.valueChanges.subscribe(() => {
+        if (this.connectionStatus !== 'idle') {
+          this.connectionStatus = 'idle';
+          this.connectionResult = null;
+          this.branches = [];
+          this.branchRules.controls.forEach(c => {
+            c.get('pattern')!.disable();
+            c.patchValue({ pattern: '' });
+          });
+        }
+      });
+    });
   }
 
   get branchRules(): FormArray {
     return this.form.get('branchRules') as FormArray;
   }
 
+  get canTestConnection(): boolean {
+    const v = this.form.getRawValue();
+    return !!(v.providerId && v.webUrl && v.secretRef) && this.connectionStatus !== 'testing';
+  }
+
+  testConnection(): void {
+    if (!this.canTestConnection) return;
+    this.connectionStatus = 'testing';
+    this.connectionError = '';
+
+    const v = this.form.getRawValue();
+    const webUrl = v.webUrl!.trim().replace(/\/$/, '');
+
+    this.repositoryService.testConnection({
+      providerId: v.providerId!,
+      webUrl,
+      authType: this.authTypeStrMap[v.authenticationType as number] ?? 'token',
+      secretRefOrToken: v.secretRef!,
+    }).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.connectionStatus = 'success';
+          this.connectionResult = result;
+          this.branches = result.branches.map(b => b.name);
+          this.branchRules.controls.forEach(c => c.get('pattern')!.enable());
+          if (result.defaultBranch && this.branchRules.length > 0) {
+            this.branchRules.at(0).patchValue({ pattern: result.defaultBranch });
+          }
+        } else {
+          this.connectionStatus = 'error';
+          this.connectionError = result.errorMessage ?? 'Connection failed.';
+          this.connectionResult = null;
+          this.branches = [];
+          this.branchRules.controls.forEach(c => {
+            c.get('pattern')!.disable();
+            c.patchValue({ pattern: '' });
+          });
+        }
+      },
+      error: (err) => {
+        this.connectionStatus = 'error';
+        this.connectionError = err?.error?.message ?? 'Connection failed.';
+        this.connectionResult = null;
+        this.branches = [];
+        this.branchRules.controls.forEach(c => {
+          c.get('pattern')!.disable();
+          c.patchValue({ pattern: '' });
+        });
+      },
+    });
+  }
+
   addBranchRule(): void {
+    const hasBranches = this.branches.length > 0;
     this.branchRules.push(
       this.fb.group({
-        pattern: ['', [Validators.required, Validators.maxLength(200)]],
+        pattern: [
+          { value: hasBranches ? this.branches[0] : '', disabled: !hasBranches },
+          [Validators.required, Validators.maxLength(200)],
+        ],
         scanOnPush: [true],
       })
     );
@@ -78,11 +161,11 @@ export class AddRepositoryComponent implements OnInit {
 
     this.repositoryService.create({
       providerId: v.providerId!,
-      providerRepoId: urlPath,
+      providerRepoId: this.connectionResult?.providerRepoId ?? urlPath,
       name: v.name!,
-      webUrl,
-      cloneUrl: webUrl.endsWith('.git') ? webUrl : `${webUrl}.git`,
-      defaultBranch: 'main',
+      webUrl: this.connectionResult?.webUrlNormalized ?? webUrl,
+      cloneUrl: this.connectionResult?.cloneUrl ?? `${webUrl}.git`,
+      defaultBranch: this.connectionResult?.defaultBranch ?? 'main',
       authenticationType: v.authenticationType!,
       secretRef: v.secretRef!,
       runInitialScan: false,

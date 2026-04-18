@@ -61,7 +61,7 @@ public sealed class WebhookTriggerEndoint : EndpointWithoutRequest
             return;
         }
 
-        //var job = await plugin.BuildScanJobAsync(payload);
+        var job = await plugin.BuildScanJobAsync(payload);
 
 
         HttpContext.Response.StatusCode = 202;

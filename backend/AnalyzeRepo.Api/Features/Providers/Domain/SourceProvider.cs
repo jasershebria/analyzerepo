@@ -26,4 +26,11 @@ public sealed class SourceProvider : FullAuditedAggregateRoot<Guid>
             CreatedAt  = DateTime.UtcNow
         };
     }
+
+    public void Update(string name, string apiBaseUrl)
+    {
+        Name       = name.Trim();
+        ApiBaseUrl = apiBaseUrl.Trim();
+        SetModificationAudit();
+    }
 }

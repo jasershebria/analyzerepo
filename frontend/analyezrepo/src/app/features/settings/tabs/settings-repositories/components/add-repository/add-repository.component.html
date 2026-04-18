@@ -106,6 +106,37 @@
         </p>
       </div>
 
+      <!-- Test Connection -->
+      <div class="test-connection">
+        <button
+          type="button"
+          (click)="testConnection()"
+          [disabled]="!canTestConnection"
+          class="test-btn"
+        >
+          @if (connectionStatus === 'testing') {
+            <span class="test-btn__spinner"></span>
+            Testing...
+          } @else {
+            <lucide-icon name="zap" [size]="16"></lucide-icon>
+            Test Connection
+          }
+        </button>
+
+        @if (connectionStatus === 'success') {
+          <div class="conn-status conn-status--success">
+            <lucide-icon name="check-circle-2" [size]="16"></lucide-icon>
+            Connected — {{ connectionResult?.repoName }}
+          </div>
+        }
+        @if (connectionStatus === 'error') {
+          <div class="conn-status conn-status--error">
+            <lucide-icon name="alert-circle" [size]="16"></lucide-icon>
+            {{ connectionError }}
+          </div>
+        }
+      </div>
+
     </div>
   </div>
 
@@ -123,19 +154,23 @@
 
     <div class="settings-card__body" formArrayName="branchRules">
       @for (rule of branchRules.controls; track i; let i = $index) {
-      <div
-        [formGroupName]="i"
-        class="branch-rule"
-      >
+      <div [formGroupName]="i" class="branch-rule">
         <div class="branch-rule__fields">
           <div class="field field--inline">
             <label class="field__label">Pattern <span class="field__required">*</span></label>
-            <input
-              type="text"
+            <select
               formControlName="pattern"
-              placeholder="main"
               class="field__input"
-            />
+              [class.field__input--disabled]="branches.length === 0"
+            >
+              @if (branches.length === 0) {
+                <option value="">— Test connection first —</option>
+              } @else {
+                @for (b of branches; track b) {
+                  <option [value]="b">{{ b }}</option>
+                }
+              }
+            </select>
           </div>
           <label class="field__checkbox">
             <input type="checkbox" formControlName="scanOnPush" />

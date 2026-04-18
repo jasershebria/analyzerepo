@@ -19,6 +19,13 @@ const routes: Routes = [
             (m) => m.RepositoriesModule
           ),
       },
+      {
+        path: 'providers',
+        loadChildren: () =>
+          import('./tabs/settings-providers/providers.module').then(
+            (m) => m.ProvidersModule
+          ),
+      },
       { path: 'github',        component: SettingsGithubComponent },
       { path: 'api',           component: SettingsApiComponent },
       { path: 'notifications', component: SettingsNotificationsComponent },

@@ -46,6 +46,7 @@ import {
   Plus,
   ExternalLink,
   ArrowLeft,
+  X,
 } from 'lucide-angular';
 
 const LUCIDE_ICONS = {
@@ -91,6 +92,7 @@ const LUCIDE_ICONS = {
   Plus,
   ExternalLink,
   ArrowLeft,
+  X,
 };
 
 @NgModule({

@@ -1,0 +1,73 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="modal__header">
+      <div class="modal__title-row">
+        <div class="settings-card__icon-wrap settings-card__icon-wrap--gradient">
+          <lucide-icon name="server" [size]="18" class="settings-card__icon settings-card__icon--white"></lucide-icon>
+        </div>
+        <h2 class="modal__title" id="modal-title">Add New Provider</h2>
+      </div>
+      <button (click)="cancel()" class="modal__close" aria-label="Close">
+        <lucide-icon name="x" [size]="18"></lucide-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <div class="modal__body">
+
+        @if (errorMessage) {
+          <div class="error-banner">{{ errorMessage }}</div>
+        }
+
+        <div class="field">
+          <label class="field__label">
+            Name <span class="field__required">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="GitHub"
+            class="field__input"
+            autofocus
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label">
+            Code <span class="field__required">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="github"
+            class="field__input"
+          />
+          <p class="field__hint">Lowercase letters, numbers, hyphens and underscores only.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">
+            API Base URL <span class="field__required">*</span>
+          </label>
+          <input
+            type="url"
+            formControlName="apiBaseUrl"
+            placeholder="https://api.github.com"
+            class="field__input"
+          />
+        </div>
+
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" (click)="cancel()" class="cancel-btn">Cancel</button>
+        <button type="submit" [disabled]="form.invalid || isSubmitting" class="submit-btn">
+          <lucide-icon name="plus" [size]="16"></lucide-icon>
+          {{ isSubmitting ? 'Adding...' : 'Add Provider' }}
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

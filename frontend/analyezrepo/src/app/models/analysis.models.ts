@@ -4,6 +4,32 @@ export interface ProviderDto {
   code: string;
   apiBaseUrl: string;
   isActive: boolean;
+  createdAt: string;
+}
+
+export interface TestConnectionRequest {
+  providerId: string;
+  webUrl: string;
+  authType: string;
+  secretRefOrToken: string;
+}
+
+export interface TestConnectionResponse {
+  success: boolean;
+  repoName?: string;
+  providerRepoId?: string;
+  providerWorkspaceId?: string;
+  defaultBranch?: string;
+  cloneUrl?: string;
+  webUrlNormalized?: string;
+  errorMessage?: string;
+  branches: { name: string }[];
+}
+
+export interface CreateProviderCommand {
+  name: string;
+  code: string;
+  apiBaseUrl: string;
 }
 
 export interface CreateRepositoryCommand {
