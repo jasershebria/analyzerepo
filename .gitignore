@@ -48,6 +48,29 @@ testem.log
 __screenshots__/
 
 # ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+pip-wheel-metadata/
+*.whl
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.log
+agent_memory.json
+
+# ===========================
 # System
 # ===========================
 .DS_Store

@@ -81,6 +81,7 @@ export interface AiChatMessage {
 export interface AiChatHistoryRequest {
   messages: AiChatMessage[];
   systemPrompt?: string;
+  repoId?: string;
 }
 
 export interface AiChatResponse {
