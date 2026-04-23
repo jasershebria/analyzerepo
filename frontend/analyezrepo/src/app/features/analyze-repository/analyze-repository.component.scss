@@ -1,5 +1,12 @@
 @use 'app/variables' as *;
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .repo-select-view {
   padding: 2rem;
   height: 100%;

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from langchain_core.messages import BaseMessage
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
@@ -15,9 +15,10 @@ def build_graph():
     """Build and compile the LangGraph ReAct graph. Call once at startup."""
     lc_tools = as_langchain_tools()
 
-    llm = ChatOllama(
-        base_url=settings.ollama_base_url,
-        model=settings.ollama_model,
+    llm = ChatOpenAI(
+        base_url=settings.ai_base_url,
+        api_key=settings.ai_api_key,
+        model=settings.ai_model,
         temperature=0,
     ).bind_tools(lc_tools)
 

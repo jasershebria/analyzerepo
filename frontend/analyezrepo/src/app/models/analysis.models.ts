@@ -88,6 +88,43 @@ export interface AiChatResponse {
   reply: string;
 }
 
+// RAG
+export interface RagIndexRequest {
+  repoId: string;
+  workspacePath: string;
+  clearExisting?: boolean;
+}
+
+export interface RagIndexResponse {
+  repoId: string;
+  filesIndexed: number;
+  chunksCreated: number;
+  chunksUpserted: number;
+}
+
+export interface RagQueryRequest {
+  repoId: string;
+  question: string;
+  sessionId: string;
+  topK?: number;
+}
+
+export interface RagSourceReference {
+  filePath: string;
+  score: number;
+}
+
+export interface RagQueryResponse {
+  answer: string;
+  sources: RagSourceReference[];
+}
+
+export interface RagStatusResponse {
+  repoId: string;
+  chunkCount: number;
+  isIndexed: boolean;
+}
+
 export interface BranchRuleDto {
   id: string;
   pattern: string;

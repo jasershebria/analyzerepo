@@ -21,7 +21,7 @@ async def run_agent(request: AgentRunRequest) -> AgentRunResult:
 @router.get("/info")
 async def agent_info() -> dict:
     return {
-        "model": settings.ollama_model,
-        "ollamaBaseUrl": settings.ollama_base_url,
+        "model": settings.ai_model,
+        "aiBaseUrl": settings.ai_base_url,
         "availableTools": len(tool_registry.get_all()),
     }

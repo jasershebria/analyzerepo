@@ -84,11 +84,13 @@ class RepoSyncService:
         all_files: list[Path] = []
 
         for dirpath, dirnames, filenames in os.walk(workspace):
-            dirnames[:] = [d for d in dirnames if d not in _SKIP_DIRS and not d.startswith(".")]
+            dirnames[:] = sorted(d for d in dirnames if d not in _SKIP_DIRS and not d.startswith("."))
             rel_dir = Path(dirpath).relative_to(workspace)
+            if rel_dir != Path("."):
+                file_tree.append(str(rel_dir).replace("\\", "/") + "/")
             for fname in sorted(filenames):
                 p = Path(dirpath) / fname
-                file_tree.append(str(rel_dir / fname))
+                file_tree.append(str(rel_dir / fname).replace("\\", "/"))
                 ext = p.suffix.lower()
                 if ext in _CODE_EXTENSIONS:
                     lang_count[ext] += 1
@@ -100,7 +102,7 @@ class RepoSyncService:
             "repoUrl": _mask_url(repo.clone_url or repo.web_url),
             "workspacePath": str(workspace),
             "totalFiles": len(file_tree),
-            "fileTree": file_tree[:500],
+            "fileTree": file_tree,
             "languages": dict(lang_count),
             "insights": insights,
         }

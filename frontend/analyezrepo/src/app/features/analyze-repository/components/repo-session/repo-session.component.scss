@@ -1,5 +1,12 @@
 @use 'app/variables' as *;
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .session-loading {
   display: flex;
   flex-direction: column;

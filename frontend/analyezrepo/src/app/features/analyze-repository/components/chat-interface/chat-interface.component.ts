@@ -25,7 +25,7 @@ import { AnalysisStateService } from '../../services/analysis-state.service';
   ],
 })
 export class ChatInterfaceComponent implements AfterViewChecked {
-  @ViewChild('messagesEnd') messagesEndRef!: ElementRef;
+  @ViewChild('messagesContainer') messagesContainerRef!: ElementRef<HTMLElement>;
 
   private readonly state = inject(AnalysisStateService);
 
@@ -46,6 +46,7 @@ export class ChatInterfaceComponent implements AfterViewChecked {
   constructor() {
     effect(() => {
       this.messages();
+      this.isTyping();
       this.shouldScroll = true;
     });
   }
@@ -58,9 +59,10 @@ export class ChatInterfaceComponent implements AfterViewChecked {
   }
 
   private scrollToBottom(): void {
-    try {
-      this.messagesEndRef?.nativeElement.scrollIntoView({ behavior: 'smooth' });
-    } catch (_) {}
+    const el = this.messagesContainerRef?.nativeElement;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
   }
 
   sendMessage(text?: string): void {
