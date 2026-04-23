@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.routers import providers, repositories, ai, webhooks, files
+from app.routers import providers, repositories, ai, webhooks, files, tools, agent
+from app.mcp.tools_server import mcp_app
 
 
 @asynccontextmanager
@@ -48,6 +49,9 @@ app.include_router(repositories.router, prefix=API_PREFIX)
 app.include_router(ai.router, prefix=API_PREFIX)
 app.include_router(webhooks.router, prefix=API_PREFIX)
 app.include_router(files.router, prefix=API_PREFIX)
+app.include_router(tools.router, prefix=API_PREFIX)
+app.include_router(agent.router, prefix=API_PREFIX)
+app.mount("/mcp", mcp_app)
 
 
 @app.get("/health", tags=["Health"])

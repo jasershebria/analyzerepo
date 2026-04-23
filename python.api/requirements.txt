@@ -9,3 +9,7 @@ httpx>=0.27.0
 openai>=1.40.0
 python-multipart>=0.0.9
 gitpython>=3.1.43
+duckduckgo-search>=6.2.0
+pypdf>=4.0.0
+mcp>=1.0.0
+sse-starlette>=1.6.1
