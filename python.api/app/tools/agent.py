@@ -40,13 +40,10 @@ class AgentTool(BaseTool):
         )
 
     async def _run(self, args: dict[str, Any]) -> str:
-        # Sub-agent spawning delegates to the AgentService via the /api/agent/run endpoint.
-        # In a direct tool call context, delegate back through the agent service.
-        from app.services.agent_service import AgentService
+        from app.agent.service import AgentService
         from app.schemas.agent import AgentRunRequest
-        from app.services.tools_service import ToolsService
 
-        svc = AgentService(ToolsService())
+        svc = AgentService()
         req = AgentRunRequest(
             prompt=args["prompt"],
             system_prompt=f"You are a specialized sub-agent. Task: {args.get('description', '')}",

@@ -6,7 +6,9 @@
       "Bash(pip show *)",
       "Bash(python -c \"import sys; print\\(sys.path\\)\")",
       "Bash(/c/Users/jaser/AppData/Local/Programs/Python/Python314/python.exe -c \"import mcp; print\\('mcp', mcp.__version__\\)\")",
-      "Bash(/c/Users/jaser/AppData/Local/Programs/Python/Python314/python.exe -c ' *)"
+      "Bash(/c/Users/jaser/AppData/Local/Programs/Python/Python314/python.exe -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import langchain_core; print\\('ok'\\)\")"
     ]
   }
 }

@@ -7,12 +7,14 @@ Each tool is a BaseTool subclass with:
   • definition()  — returns a ToolDef (OpenAI function-calling schema)
   • _run(args)    — async execution, returns str or JSON-serialisable value
   • call(args)    — public entry point (validates + serialises to str)
+  • to_langchain_tool() — wraps as a LangChain StructuredTool
 
 Registry helpers:
-  get_all()       → list[BaseTool]
-  get_registry()  → dict[str, BaseTool]
-  execute(name, args) → str   (async)
-  definitions()   → list[dict]  (OpenAI format)
+  get_all()            → list[BaseTool]
+  get_registry()       → dict[str, BaseTool]
+  execute(name, args)  → str   (async)
+  definitions()        → list[dict]  (OpenAI format)
+  as_langchain_tools() → list[StructuredTool]
 """
 from __future__ import annotations
 
@@ -31,12 +33,14 @@ from .exit_worktree import ExitWorktreeTool
 from .file_edit import FileEditTool
 from .file_read import FileReadTool
 from .file_write import FileWriteTool
+from .git_commit import GitCommitTool
 from .glob_tool import GlobTool
 from .grep import GrepTool
 from .lsp import LSPTool
 from .notebook_edit import NotebookEditTool
 from .powershell import PowerShellTool
 from .remote_trigger import RemoteTriggerTool
+from .run_tests import RunTestsTool
 from .schedule_cron import CronDeleteTool, CronListTool, ScheduleCronTool
 from .send_message import SendMessageTool
 from .skill import SkillTool
@@ -59,6 +63,7 @@ __all__ = [
     "get_registry",
     "execute",
     "definitions",
+    "as_langchain_tools",
 ]
 
 _ALL_TOOLS: list[BaseTool] = [
@@ -109,6 +114,9 @@ _ALL_TOOLS: list[BaseTool] = [
     TeamDeleteTool(),
     # Code intelligence (stub)
     LSPTool(),
+    # Dev tools
+    RunTestsTool(),
+    GitCommitTool(),
 ]
 
 _REGISTRY: dict[str, BaseTool] = {t.name: t for t in _ALL_TOOLS}
@@ -130,3 +138,8 @@ async def execute(name: str, arguments: dict[str, Any]) -> str:
 
 def definitions() -> list[dict[str, Any]]:
     return [t.definition().to_dict() for t in _ALL_TOOLS]
+
+
+def as_langchain_tools() -> list:
+    """Return all registered tools as LangChain StructuredTool objects."""
+    return [t.to_langchain_tool() for t in _ALL_TOOLS]

@@ -3,16 +3,14 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 import app.tools as tool_registry
+from app.agent.service import AgentService
 from app.core.config import settings
 from app.core.routing import CamelCaseRoute
 from app.schemas.agent import AgentRunRequest, AgentRunResult
-from app.services.agent_service import AgentService
-from app.services.tools_service import ToolsService
 
 router = APIRouter(prefix="/agent", tags=["Agent"], route_class=CamelCaseRoute)
 
-_tools_service = ToolsService()
-_agent_service = AgentService(_tools_service)
+_agent_service = AgentService()
 
 
 @router.post("/run", response_model=AgentRunResult)
