@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
 
 from app.core.config import settings
+
+log = logging.getLogger(__name__)
 
 
 class GitCloneService:
@@ -18,6 +21,7 @@ class GitCloneService:
         repo_url: str,
         token: str | None = None,
         branch: str | None = None,
+        repo_id: str | None = None,
     ) -> str:
         local_path = self._derive_local_path(repo_url)
         git_dir = local_path / ".git"
@@ -26,6 +30,7 @@ class GitCloneService:
             await self._run_git(local_path, ["fetch", "--prune"])
             target = branch or await self._get_default_branch(local_path)
             await self._run_git(local_path, ["reset", "--hard", f"origin/{target}"])
+            is_fresh = False
         else:
             local_path.mkdir(parents=True, exist_ok=True)
             auth_url = self._build_auth_url(repo_url, token)
@@ -36,8 +41,21 @@ class GitCloneService:
             )
             parent = local_path.parent
             await self._run_git(parent, args)
+            is_fresh = True
+
+        if repo_id:
+            await self._index(str(local_path), repo_id, clear_existing=is_fresh)
 
         return str(local_path)
+
+    @staticmethod
+    async def _index(workspace_path: str, repo_id: str, *, clear_existing: bool) -> None:
+        try:
+            from app.rag.indexing import build_index
+            stats = await build_index(workspace_path=workspace_path, repo_id=repo_id, clear_existing=clear_existing)
+            log.info("RAG index built for %s: %s", repo_id, stats)
+        except Exception:
+            log.exception("RAG indexing failed for %s — continuing without index", repo_id)
 
     def _derive_local_path(self, repo_url: str) -> Path:
         uri = urlparse(repo_url.rstrip("/"))

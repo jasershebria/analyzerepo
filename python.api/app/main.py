@@ -1,13 +1,33 @@
 from __future__ import annotations
 
+import logging
+import logging.config
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+
+
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {"format": "%(levelname)s: %(name)s — %(message)s"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "default"},
+    },
+    "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": {
+        "uvicorn": {"propagate": True},
+        "uvicorn.access": {"propagate": True},
+    },
+})
+
 from app.core.config import settings
-from app.routers import providers, repositories, ai, webhooks
+from app.routers import providers, repositories, ai, webhooks, rag, agent
 from app.mcp.tools_server import mcp_app
 
 
@@ -68,6 +88,9 @@ app.include_router(providers.router,    prefix=API_PREFIX)
 app.include_router(repositories.router, prefix=API_PREFIX)
 app.include_router(ai.router,           prefix=API_PREFIX)
 app.include_router(webhooks.router,     prefix=API_PREFIX)
+app.include_router(rag.router,          prefix=API_PREFIX)
+app.include_router(agent.router,        prefix=API_PREFIX)
+
 app.mount("/mcp", mcp_app)
 
 

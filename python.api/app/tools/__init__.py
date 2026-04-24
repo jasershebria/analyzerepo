@@ -55,6 +55,7 @@ from .todo_write import TodoWriteTool
 from .tool_search import ToolSearchTool
 from .web_fetch import WebFetchTool
 from .web_search import WebSearchTool
+from .rag_search import RagSearchTool
 
 __all__ = [
     "BaseTool",
@@ -117,6 +118,8 @@ _ALL_TOOLS: list[BaseTool] = [
     # Dev tools
     RunTestsTool(),
     GitCommitTool(),
+    # RAG
+    RagSearchTool(),
 ]
 
 _REGISTRY: dict[str, BaseTool] = {t.name: t for t in _ALL_TOOLS}

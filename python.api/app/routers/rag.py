@@ -1,23 +1,26 @@
-# from __future__ import annotations
+from __future__ import annotations
 
-# from fastapi import APIRouter
+from fastapi import APIRouter
 
-# from app.core.routing import CamelCaseRoute
-# import app.rag.vector_store as vs
-# from app.rag.indexing import build_index
-# from app.rag.retrieval import invalidate_session, query_rag
-# from app.routers.ai import get_db
-# from app.schemas.rag import (
-#     IndexRequest,
-#     IndexResponse,
-#     IndexStatusResponse,
-#     QueryRequest,
-#     QueryResponse,
-# )
-# from sqlalchemy.ext.asyncio import AsyncSession
-# from fastapi import Depends
+from app.core.routing import CamelCaseRoute
+import app.rag.vector_store as vs
+from app.rag.indexing import build_index
+from app.rag.retrieval import invalidate_session, query_rag
+from app.routers.ai import get_db
+from app.schemas.rag import (
+    IndexRequest,
+    IndexResponse,
+    IndexStatusResponse,
+    QueryRequest,
+    QueryResponse,
+)
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends
 
-# router = APIRouter(prefix="/rag", tags=["RAG"], route_class=CamelCaseRoute)
+
+
+
+router = APIRouter(prefix="/rag", tags=["RAG"], route_class=CamelCaseRoute)
 
 
 # @router.post("/index", response_model=IndexResponse)
@@ -37,21 +40,17 @@
 #     return IndexResponse(**stats.as_dict())
 
 
-# @router.post("/query", response_model=QueryResponse)
-# async def query_repository(request: QueryRequest, db: AsyncSession = Depends(get_db)) -> QueryResponse:
-#     """Answer a question using RAG over the indexed repository.
+@router.post("/query", response_model=QueryResponse)
+async def query_repository(request: QueryRequest, db: AsyncSession = Depends(get_db)) -> QueryResponse:
 
-#     session_id is used to cache the embedding model and DB handle
-#     across requests from the same user session.
-#     """
-#     result = await query_rag(
-#         question=request.question,
-#         session_id=request.session_id,
-#         repo_id=request.repo_id,
-#         db=db,
-#         top_k=request.top_k,
-#     )
-#     return QueryResponse(**result.as_dict())
+    result = await query_rag(
+        question=request.question,
+        session_id=request.session_id,
+        repo_id=request.repo_id,
+        db=db,
+        top_k=request.top_k,
+    )
+    return QueryResponse(**result.as_dict())
 
 
 # @router.get("/status/{repo_id}", response_model=IndexStatusResponse)

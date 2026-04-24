@@ -1,0 +1,11 @@
+<div class="slash-menu" role="listbox">
+  @for (skill of filtered; track skill.name) {
+    <button class="slash-menu__item" role="option" (click)="select(skill)" type="button">
+      <span class="slash-menu__name">/{{ skill.name }}</span>
+      <span class="slash-menu__desc">{{ skill.description }}</span>
+    </button>
+  }
+  @if (filtered.length === 0) {
+    <div class="slash-menu__empty">No commands found</div>
+  }
+</div>

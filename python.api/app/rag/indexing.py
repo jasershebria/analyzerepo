@@ -10,6 +10,7 @@ import asyncio
 import hashlib
 import logging
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -83,6 +84,7 @@ async def build_index(
     repo_id: str,
     *,
     clear_existing: bool = False,
+    on_progress: Callable[[int], None] | None = None,
 ) -> IndexStats:
     """Load all source files in workspace_path, chunk them, embed, and store.
 
@@ -93,6 +95,7 @@ async def build_index(
         workspace_path: Root directory of the cloned repository.
         repo_id:        Repository UUID — determines the MongoDB collection.
         clear_existing: Drop and rebuild the collection when True.
+        on_progress:    Optional callback called with an integer 0–100 as work progresses.
 
     Returns:
         IndexStats with counts of files/chunks processed.
@@ -101,10 +104,16 @@ async def build_index(
         ValueError: If workspace_path does not exist.
         RuntimeError: If embedding fails.
     """
+    def _report(pct: int) -> None:
+        log.info("build_index [%s]: %d%%", repo_id, pct)
+        if on_progress:
+            on_progress(pct)
+
     workspace = Path(workspace_path)
     if not workspace.exists():
         raise ValueError(f"Workspace not found: {workspace}")
 
+    _report(0)
     col = vs.get_collection(repo_id)
 
     if clear_existing:
@@ -115,15 +124,17 @@ async def build_index(
 
     files = list(_collect_files(workspace))
     log.info("build_index: found %d files for repo %s", len(files), repo_id)
+    _report(5)
 
     all_chunks: list[dict[str, Any]] = []
     for path in files:
         all_chunks.extend(_split_file(path, workspace))
 
     log.info("build_index: %d chunks from %d files", len(all_chunks), len(files))
+    _report(15)
 
     try:
-        upserted = await _embed_and_store(col, all_chunks, repo_id)
+        upserted = await _embed_and_store(col, all_chunks, repo_id, _report)
     except Exception as exc:
         raise RuntimeError(f"Embedding failed for repo {repo_id}: {exc}") from exc
 
@@ -133,6 +144,7 @@ async def build_index(
         chunks_created=len(all_chunks),
         chunks_upserted=upserted,
     )
+    _report(100)
     log.info("build_index complete: %s", stats)
     return stats
 
@@ -150,12 +162,18 @@ def _make_embeddings() -> OllamaEmbeddings:
     )
 
 
-async def _embed_and_store(col: Any, chunks: list[dict[str, Any]], repo_id: str) -> int:
+async def _embed_and_store(
+    col: Any,
+    chunks: list[dict[str, Any]],
+    repo_id: str,
+    report: Callable[[int], None],
+) -> int:
     embeddings = _make_embeddings()
     batch_size = settings.rag_embedding_batch_size
     total = 0
+    total_batches = max(1, -(-len(chunks) // batch_size))  # ceil division
 
-    for i in range(0, len(chunks), batch_size):
+    for batch_num, i in enumerate(range(0, len(chunks), batch_size)):
         # Filter out empty or whitespace-only chunks to prevent provider errors
         batch = [c for c in chunks[i : i + batch_size] if c["content"] and c["content"].strip()]
         if not batch:
@@ -172,7 +190,10 @@ async def _embed_and_store(col: Any, chunks: list[dict[str, Any]], repo_id: str)
             chunk["embedding"] = emb
 
         total += await vs.upsert_chunks(col, batch)
-        log.info("build_index: stored batch %d–%d for repo %s", i, i + len(batch), repo_id)
+
+        pct = 15 + int(85 * (batch_num + 1) / total_batches)
+        report(min(pct, 99))
+        log.info("build_index: stored batch %d/%d for repo %s", batch_num + 1, total_batches, repo_id)
 
     return total
 

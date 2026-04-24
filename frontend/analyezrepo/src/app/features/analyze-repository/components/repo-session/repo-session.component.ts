@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GetRepositoryResponse } from '../../../../models/analysis.models';
 import { RepositoryService } from '../../../settings/tabs/settings-repositories/services/repository.service';
 import { AnalysisStateService } from '../../services/analysis-state.service';
+import { AgentStateService } from '../../../agent-workspace/services/agent-state.service';
 
 @Component({
   selector: 'app-repo-session',
@@ -15,6 +16,7 @@ export class RepoSessionComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly repositoryService = inject(RepositoryService);
   private readonly state = inject(AnalysisStateService);
+  private readonly agentState = inject(AgentStateService);
 
   readonly repo = signal<GetRepositoryResponse | null>(null);
   readonly loading = signal(true);
@@ -26,6 +28,7 @@ export class RepoSessionComponent implements OnInit {
       next: (full) => {
         this.repo.set(full);
         this.state.connect(full);
+        this.agentState.repoId.set(full.id);
         this.loading.set(false);
       },
       error: () => {
@@ -37,6 +40,7 @@ export class RepoSessionComponent implements OnInit {
 
   goBack(): void {
     this.state.reset();
+    this.agentState.clearMessages();
     this.router.navigate(['/analyze']);
   }
 }

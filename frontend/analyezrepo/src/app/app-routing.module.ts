@@ -35,6 +35,13 @@ const routes: Routes = [
             (m) => m.SettingsModule
           ),
       },
+      {
+        path: 'agent',
+        loadChildren: () =>
+          import('./features/agent-workspace/agent-workspace.module').then(
+            (m) => m.AgentWorkspaceModule
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

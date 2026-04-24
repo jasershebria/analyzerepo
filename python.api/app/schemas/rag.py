@@ -30,10 +30,16 @@ class SourceReference(CamelModel):
 
 class QueryResponse(CamelModel):
     answer: str
-    sources: list[SourceReference]
+    sources: list[SourceReference] = []
 
 
 class IndexStatusResponse(CamelModel):
     repo_id: str
     chunk_count: int
     is_indexed: bool
+
+
+class SkillSchema(CamelModel):
+    name: str
+    description: str
+    prompt: str

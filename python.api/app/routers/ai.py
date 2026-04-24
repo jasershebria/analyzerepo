@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-import json
-import shutil
 import uuid
-from pathlib import Path
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.routing import CamelCaseRoute
 from app.db.session import get_db
-from app.schemas.ai import AIChatRequest, AIChatResponse, AIChatWithHistoryRequest
+from app.schemas.ai import AIChatResponse, AIChatWithHistoryRequest
 from app.services.ai_service import AIChatService
 from app.services.tool_service import ToolService
 
@@ -26,19 +23,9 @@ async def test_connection() -> dict:
     return {"success": success, "model": settings.ai_model}
 
 
-@router.post("/chat", response_model=AIChatResponse)
-async def chat(request: Request) -> AIChatResponse:
-    body = await request.json()
-    req = AIChatRequest.model_validate(body)
-    reply = await _ai_service.chat(req.prompt, req.system_prompt)
-    return AIChatResponse(reply=reply)
-
 
 @router.post("/chat/history", response_model=AIChatResponse)
-async def chat_with_history(request: Request, db: AsyncSession = Depends(get_db)) -> AIChatResponse:
-    body = await request.json()
-    req = AIChatWithHistoryRequest.model_validate(body)
-
+async def chat_with_history(req: AIChatWithHistoryRequest, db: AsyncSession = Depends(get_db)) -> AIChatResponse:
     messages: list[tuple[str, str]] = []
     if req.system_prompt:
         messages.append(("system", req.system_prompt))

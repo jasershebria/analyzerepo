@@ -1,0 +1,20 @@
+<div class="plan">
+  <div class="plan__header">
+    <lucide-icon name="workflow" [size]="14"></lucide-icon>
+    <span>Plan ({{ completedCount }}/{{ tasks.length }})</span>
+  </div>
+  <ul class="plan__list">
+    @for (task of tasks; track task.id ?? task.content) {
+      <li class="plan__item" [class]="'plan__item--' + task.status">
+        <span class="plan__status-icon">
+          @switch (task.status) {
+            @case ('completed') { <lucide-icon name="check-circle-2" [size]="14"></lucide-icon> }
+            @case ('in_progress') { <span class="spinner spinner--sm"></span> }
+            @default { <lucide-icon name="circle" [size]="14"></lucide-icon> }
+          }
+        </span>
+        <span class="plan__content">{{ task.content }}</span>
+      </li>
+    }
+  </ul>
+</div>

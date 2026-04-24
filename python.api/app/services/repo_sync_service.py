@@ -171,7 +171,7 @@ async def _index(workspace_path: str, repo_id: str, *, clear_existing: bool) -> 
         from app.rag.retrieval import invalidate_session
         stats = await build_index(workspace_path=workspace_path, repo_id=repo_id, clear_existing=clear_existing)
         invalidate_session(repo_id)
-        log.info("RAG index built for %s: %s chunks", repo_id, stats.chunk_count)
+        log.info("RAG index built for %s: %s chunks upserted", repo_id, stats.chunks_upserted)
     except Exception:
         log.exception("RAG indexing failed for %s — continuing without index", repo_id)
 

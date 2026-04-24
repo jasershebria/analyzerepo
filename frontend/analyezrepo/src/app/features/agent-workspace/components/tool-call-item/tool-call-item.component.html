@@ -1,0 +1,31 @@
+<div class="tool-call" [class.destructive]="isDestructive" [class.pending]="toolCall.status === 'pending'">
+  <button class="tool-call__header" (click)="toggle()" type="button">
+    <span class="tool-call__icon">
+      @if (toolCall.status === 'pending') {
+        <span class="spinner"></span>
+      } @else {
+        <lucide-icon name="check" [size]="12"></lucide-icon>
+      }
+    </span>
+    <span class="tool-call__name" [class.tool-call__name--destructive]="isDestructive">
+      {{ toolCall.tool }}
+    </span>
+    <span class="tool-call__summary">{{ inputSummary }}</span>
+    <lucide-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'" [size]="12" class="tool-call__chevron"></lucide-icon>
+  </button>
+
+  @if (expanded()) {
+    <div class="tool-call__body">
+      <div class="tool-call__section">
+        <div class="tool-call__label">Input</div>
+        <pre class="tool-call__code">{{ formatJson(toolCall.input) }}</pre>
+      </div>
+      @if (toolCall.output) {
+        <div class="tool-call__section">
+          <div class="tool-call__label">Output</div>
+          <pre class="tool-call__code tool-call__code--output">{{ toolCall.output }}</pre>
+        </div>
+      }
+    </div>
+  }
+</div>

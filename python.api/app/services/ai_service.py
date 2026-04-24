@@ -130,30 +130,51 @@ _KNOWN_TOOLS = {"sync_repository", "analyze_repository", "read_file", "write_fil
 
 
 def _try_parse_tool_call(text: str) -> tuple[str, dict] | None:
-    """Return (function_name, args) by finding the first and last braces in the text."""
-    # 1. Find the largest possible JSON block
-    start = text.find('{')
-    end = text.rfind('}')
-    
-    if start == -1 or end == -1 or end <= start:
-        return None
-        
-    candidate = text[start:end+1]
-    
-    # 2. Try parsing it
-    try:
-        data = json.loads(candidate)
+    """Return (function_name, args) from the first valid tool-call JSON in text.
+
+    Tries each balanced brace block independently so multiple JSON examples in
+    a markdown-heavy response don't merge into unparseable text.
+    """
+    import re
+
+    def _parse_candidate(s: str) -> tuple[str, dict] | None:
+        try:
+            data = json.loads(s)
+        except (json.JSONDecodeError, ValueError):
+            try:
+                fixed = s.replace('\\', '\\\\').replace('\\\\\\\\', '\\\\')
+                data = json.loads(fixed)
+            except Exception:
+                return None
         if isinstance(data, dict) and "name" in data:
             return data["name"], data.get("arguments") or data.get("parameters") or {}
-    except (json.JSONDecodeError, ValueError):
-        # 3. Aggressive fallback for malformed escaping (common in small models)
-        try:
-            # Fix unescaped backslashes before trying again
-            fixed = candidate.replace('\\', '\\\\').replace('\\\\\\\\', '\\\\')
-            data = json.loads(fixed)
-            if isinstance(data, dict) and "name" in data:
-                return data["name"], data.get("arguments") or {}
-        except:
-            pass
-            
+        return None
+
+    # 1. Try JSON inside ```json ... ``` or ``` ... ``` code blocks first
+    for m in re.finditer(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL):
+        result = _parse_candidate(m.group(1))
+        if result:
+            return result
+
+    # 2. Walk every balanced { } block in order — return first valid tool call
+    i = 0
+    while i < len(text):
+        if text[i] != '{':
+            i += 1
+            continue
+        depth = 0
+        j = i
+        while j < len(text):
+            if text[j] == '{':
+                depth += 1
+            elif text[j] == '}':
+                depth -= 1
+                if depth == 0:
+                    result = _parse_candidate(text[i:j + 1])
+                    if result:
+                        return result
+                    break
+            j += 1
+        i += 1
+
     return None

@@ -10,6 +10,7 @@ import { CodeReferencesComponent } from './components/output-panel/code-referenc
 import { AnalysisStateService } from './services/analysis-state.service';
 import { SharedModule } from '../../shared/shared.module';
 import { RepoSessionComponent } from './components/repo-session/repo-session.component';
+import { AgentWorkspaceModule } from '../agent-workspace/agent-workspace.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { RepoSessionComponent } from './components/repo-session/repo-session.com
     FlowchartViewerComponent,
     CodeReferencesComponent,
   ],
-  imports: [SharedModule, AnalyzeRepositoryRoutingModule],
+  imports: [SharedModule, AnalyzeRepositoryRoutingModule, AgentWorkspaceModule],
   providers: [AnalysisStateService],
 })
 export class AnalyzeRepositoryModule {}

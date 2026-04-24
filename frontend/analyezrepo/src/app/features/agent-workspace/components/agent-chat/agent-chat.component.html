@@ -1,0 +1,100 @@
+<div class="agent-chat">
+  <!-- Header -->
+  <div class="agent-chat__header">
+    <div class="agent-chat__title">
+      <lucide-icon name="sparkles" [size]="18"></lucide-icon>
+      <span>AI Agent</span>
+    </div>
+    @if (state.hasMessages()) {
+      <button class="agent-chat__clear" (click)="clear()" title="Clear chat" type="button">
+        <lucide-icon name="trash-2" [size]="14"></lucide-icon>
+      </button>
+    }
+  </div>
+
+  <!-- Messages -->
+  <div class="agent-chat__messages">
+    @if (!state.hasMessages()) {
+      <div class="agent-chat__empty">
+        <lucide-icon name="sparkles" [size]="32"></lucide-icon>
+        <p>Ask anything about your codebase, or type <code>/</code> to use a skill.</p>
+      </div>
+    }
+
+    @for (msg of state.messages(); track trackById($index, msg)) {
+      <div class="message" [class.message--user]="msg.role === 'user'" [class.message--assistant]="msg.role === 'assistant'">
+
+        @if (msg.role === 'assistant') {
+          <div class="message__avatar">
+            <lucide-icon name="sparkles" [size]="14"></lucide-icon>
+          </div>
+        }
+
+        <div class="message__body">
+          <!-- Plan display (when agent calls todo_write) -->
+          @if (msg.plan && msg.plan.length > 0) {
+            <app-plan-display [tasks]="msg.plan"></app-plan-display>
+          }
+
+          <!-- Message text -->
+          @if (msg.content) {
+            <div class="message__text" [innerHTML]="msg.content"></div>
+          }
+
+          <!-- Streaming cursor -->
+          @if (msg.isStreaming && !msg.content) {
+            <span class="message__cursor">▋</span>
+          }
+
+          <!-- Tool calls -->
+          @if (msg.toolCalls.length > 0) {
+            <div class="message__tool-calls">
+              @for (tc of msg.toolCalls; track tc.id) {
+                <app-tool-call-item [toolCall]="tc"></app-tool-call-item>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    }
+
+    <div #messagesEnd></div>
+  </div>
+
+  <!-- Input area -->
+  <div class="agent-chat__input-area">
+    @if (showSlashMenu() && skills().length > 0) {
+      <app-slash-command-menu
+        [skills]="skills()"
+        [filter]="slashFilter()"
+        (selected)="selectSkill($event)"
+      ></app-slash-command-menu>
+    }
+
+    <div class="agent-chat__input-row">
+      <textarea
+        #input
+        class="agent-chat__input"
+        [value]="inputText()"
+        (input)="onInputChange($any($event.target).value)"
+        (keydown)="onKeydown($event)"
+        placeholder="Ask about your codebase, or type / for skills…"
+        rows="1"
+        [disabled]="state.isStreaming()"
+      ></textarea>
+      <button
+        class="agent-chat__send"
+        (click)="send()"
+        [disabled]="!inputText().trim() || state.isStreaming()"
+        type="button"
+      >
+        @if (state.isStreaming()) {
+          <span class="spinner spinner--sm"></span>
+        } @else {
+          <lucide-icon name="send" [size]="16"></lucide-icon>
+        }
+      </button>
+    </div>
+  </div>
+</div>
