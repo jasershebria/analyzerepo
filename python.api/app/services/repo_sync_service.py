@@ -49,11 +49,15 @@ class RepoSyncService:
                 if code != 0:
                     return {"status": "error", "workspacePath": str(workspace), "message": f"git pull failed: {err}", "repoUrl": masked_url}
                 changed = "Already up to date" not in out
-                return {"status": "updated" if changed else "unchanged", "workspacePath": str(workspace), "message": out.strip(), "repoUrl": masked_url}
+                sync_status = "updated" if changed else "unchanged"
+                if changed:
+                    await _index(str(workspace), str(repo_id), clear_existing=True)
+                return {"status": sync_status, "workspacePath": str(workspace), "message": out.strip(), "repoUrl": masked_url}
 
             elif workspace.exists():
-                # Directory exists without .git — files are already present locally
+                # Directory exists without .git — index if not already indexed
                 log.info("Workspace %s exists (no .git), skipping clone", workspace)
+                await _index(str(workspace), str(repo_id), clear_existing=False)
                 return {"status": "unchanged", "workspacePath": str(workspace), "message": "Workspace already exists locally.", "repoUrl": masked_url}
 
             else:
@@ -66,6 +70,7 @@ class RepoSyncService:
                     if workspace.exists() and not any(workspace.iterdir()):
                         workspace.rmdir()
                     return {"status": "error", "workspacePath": str(workspace), "message": f"git clone failed: {err}", "repoUrl": masked_url}
+                await _index(str(workspace), str(repo_id), clear_existing=True)
                 return {"status": "cloned", "workspacePath": str(workspace), "message": "Repository cloned successfully.", "repoUrl": masked_url}
 
         except Exception as exc:
@@ -158,6 +163,17 @@ def _mask_url(url: str) -> str:
     if u.password:
         return url.replace(u.password, "***")
     return url
+
+
+async def _index(workspace_path: str, repo_id: str, *, clear_existing: bool) -> None:
+    try:
+        from app.rag.indexing import build_index
+        from app.rag.retrieval import invalidate_session
+        stats = await build_index(workspace_path=workspace_path, repo_id=repo_id, clear_existing=clear_existing)
+        invalidate_session(repo_id)
+        log.info("RAG index built for %s: %s chunks", repo_id, stats.chunk_count)
+    except Exception:
+        log.exception("RAG indexing failed for %s — continuing without index", repo_id)
 
 
 async def _run(cmd: str, args: list[str], cwd: Path) -> tuple[int, str, str]:

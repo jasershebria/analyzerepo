@@ -1,7 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, switchMap, map } from 'rxjs/operators';
+import { catchError, of } from 'rxjs';
 import { AnalysisData, GetRepositoryResponse, Message } from '../../../models/analysis.models';
 import { RagService } from './rag.service';
 import { environment } from '../../../../environments/environment';
@@ -17,9 +16,7 @@ export class AnalysisStateService {
   readonly analysisData = signal<AnalysisData | null>(null);
   readonly isLoadingContext = signal(false);
 
-  private repoLocalPath = 'D:\\NoxAlarmApp';
   private repoId = '';
-  private workspacePath = '';
   private sessionId = '';
 
   connect(repo: GetRepositoryResponse): void {
@@ -36,20 +33,7 @@ export class AnalysisStateService {
       .post<{ status: string; workspacePath: string; message: string }>(
         `${environment.apiBase}/api/repositories/${repo.id}/sync`, {}
       )
-      .pipe(
-        switchMap(syncResult => {
-          this.workspacePath = syncResult.workspacePath;
-
-          const analyze$ = this.http
-            .get<{ fileTree: string[]; repoUrl: string }>(
-              `${environment.apiBase}/api/repositories/${repo.id}/analyze`
-            )
-            .pipe(catchError(() => of({ fileTree: [], repoUrl: '' })));
-
-          return forkJoin({ syncResult: of(syncResult), analysis: analyze$ });
-        }),
-        catchError(() => of(null)),
-      )
+      .pipe(catchError(() => of(null)))
       .subscribe(result => {
         this.isLoadingContext.set(false);
 
@@ -60,10 +44,9 @@ export class AnalysisStateService {
           return;
         }
 
-        const { syncResult } = result;
-        const syncStatus = syncResult.status === 'error'
-          ? `Sync failed: ${syncResult.message}`
-          : `Sync: **${syncResult.status}**.`;
+        const syncStatus = result.status === 'error'
+          ? `Sync failed: ${result.message}`
+          : `Sync: **${result.status}**.`;
 
         this.messages.set([
           {
@@ -80,7 +63,6 @@ export class AnalysisStateService {
     this.messages.set([]);
     this.analysisData.set(null);
     this.repoId = '';
-    this.workspacePath = '';
     this.sessionId = '';
   }
 

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.routers import providers, repositories, ai, webhooks, files, tools, agent, rag
+from app.routers import providers, repositories, ai, webhooks
 from app.mcp.tools_server import mcp_app
 
 
@@ -18,17 +18,6 @@ async def lifespan(app: FastAPI):
     from app.services.ai_service import AIChatService
 
     log = logging.getLogger("uvicorn.error")
-
-    try:
-        ai_service = AIChatService()
-        success = await ai_service.check_connection()
-        if success:
-            log.info(f"Successfully connected to AI model: {settings.ai_model}")
-        else:
-            log.warning(f"Failed to connect to AI model: {settings.ai_model}. Check your credentials and API status.")
-    except Exception as e:
-        log.error(f"Error during AI connection check: {e}")
-
     yield
 
     # Shutdown — close the shared MongoDB client
@@ -40,21 +29,16 @@ app = FastAPI(
     version="1.0.0",
     description=(
         "AI-powered repository analysis backend. "
-        "Exposes an autonomous agent (`/api/agent/run`), modular tools, "
-        "AI chat, repository management, and an MCP server for OpenHands integration."
+        "AI chat, repository management, RAG pipeline, and an MCP server for OpenHands integration."
     ),
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_tags=[
-        {"name": "Agent",        "description": "Autonomous LangGraph ReAct agent — run tasks with tool use."},
-        {"name": "Tools",        "description": "Individual tool execution and schema discovery."},
         {"name": "AI",           "description": "Direct LLM chat endpoints (single-turn and multi-turn with history)."},
         {"name": "Repositories", "description": "Repository registration, sync, and metadata."},
         {"name": "Providers",    "description": "Git provider credentials (GitHub, GitLab, Bitbucket, …)."},
-        {"name": "Files",        "description": "Repository file browsing and content access."},
         {"name": "Webhooks",     "description": "Incoming webhook handlers for provider push events."},
-        {"name": "RAG",          "description": "RAG pipeline — index repository source files and answer questions grounded in real code."},
         {"name": "Health",       "description": "Liveness probe."},
     ],
 )
@@ -84,10 +68,6 @@ app.include_router(providers.router,    prefix=API_PREFIX)
 app.include_router(repositories.router, prefix=API_PREFIX)
 app.include_router(ai.router,           prefix=API_PREFIX)
 app.include_router(webhooks.router,     prefix=API_PREFIX)
-app.include_router(files.router,        prefix=API_PREFIX)
-app.include_router(tools.router,        prefix=API_PREFIX)
-app.include_router(agent.router,        prefix=API_PREFIX)
-app.include_router(rag.router,          prefix=API_PREFIX)
 app.mount("/mcp", mcp_app)
 
 
