@@ -39,7 +39,7 @@ class RepoSyncService:
         clone_url = repo.clone_url or repo.web_url
         auth_url = _build_auth_url(clone_url, token)
         masked_url = _mask_url(auth_url)
-        workspace = Path(settings.git_clone_base_path)
+        workspace = (Path(settings.git_clone_base_path) / str(repo_id)).resolve()
 
         try:
             if (workspace / ".git").exists():
@@ -52,12 +52,22 @@ class RepoSyncService:
                 sync_status = "updated" if changed else "unchanged"
                 if changed:
                     await _index(str(workspace), str(repo_id), clear_existing=True)
+                
+                repo.cloned_directory = str(workspace)
+                await self._db.commit()
+                log.info("Updated repository %s cloned_directory to %s", repo_id, workspace)
+                
                 return {"status": sync_status, "workspacePath": str(workspace), "message": out.strip(), "repoUrl": masked_url}
 
             elif workspace.exists():
                 # Directory exists without .git — index if not already indexed
                 log.info("Workspace %s exists (no .git), skipping clone", workspace)
                 await _index(str(workspace), str(repo_id), clear_existing=False)
+                
+                repo.cloned_directory = str(workspace)
+                await self._db.commit()
+                log.info("Updated repository %s cloned_directory to %s", repo_id, workspace)
+                
                 return {"status": "unchanged", "workspacePath": str(workspace), "message": "Workspace already exists locally.", "repoUrl": masked_url}
 
             else:
@@ -71,6 +81,11 @@ class RepoSyncService:
                         workspace.rmdir()
                     return {"status": "error", "workspacePath": str(workspace), "message": f"git clone failed: {err}", "repoUrl": masked_url}
                 await _index(str(workspace), str(repo_id), clear_existing=True)
+                
+                repo.cloned_directory = str(workspace)
+                await self._db.commit()
+                log.info("Updated repository %s cloned_directory to %s", repo_id, workspace)
+                
                 return {"status": "cloned", "workspacePath": str(workspace), "message": "Repository cloned successfully.", "repoUrl": masked_url}
 
         except Exception as exc:
@@ -79,7 +94,7 @@ class RepoSyncService:
 
     async def analyze(self, repo_id: uuid.UUID) -> dict:
         repo = await self._get_repo(repo_id)
-        workspace = Path(settings.git_clone_base_path)
+        workspace = Path(repo.cloned_directory) if repo.cloned_directory else Path(settings.git_clone_base_path) / str(repo_id)
 
         if not workspace.exists():
             raise ValueError(f"Workspace '{workspace}' does not exist. Run sync first.")
@@ -146,7 +161,7 @@ def _build_insights(workspace: Path, files: list[Path]) -> list[dict]:
 
     api_files = [f for f in files if any(k in f.stem.lower() for k in ("api", "route", "controller", "endpoint", "service"))]
     if api_files:
-        insights.append({"category": "api", "title": "Likely API / service files", "detail": "\n".join(str(f.relative_to(workspace)) for f in api_files[:20])})
+        insights.append({"category": "api", "title": "Likely API / service files", "detail": "\n".join(str(f.relative_to(workspace)) for f in api_files)})
 
     return insights
 

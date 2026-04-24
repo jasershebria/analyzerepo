@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 export interface AgentRunRequest {
   prompt: string;
   repoId?: string;
+  clonedPath?: string;
   history?: AgentMessage[];
   maxRounds?: number;
 }
@@ -15,7 +16,14 @@ export interface AgentMessage {
   toolCallId?: string;
 }
 
+export interface ThinkingStep {
+  step: number;
+  tool: string;
+  purpose: string;
+}
+
 export type AgentEvent =
+  | { type: 'thinking';   intent: string; steps: ThinkingStep[] }
   | { type: 'token';      content: string }
   | { type: 'tool_start'; tool: string; input: Record<string, unknown> }
   | { type: 'tool_end';   tool: string; output: string }
@@ -42,6 +50,7 @@ export class AgentStreamService {
       const body = {
         prompt: request.prompt,
         repoId: request.repoId ?? null,
+        clonedPath: request.clonedPath ?? null,
         history: request.history ?? [],
         maxRounds: request.maxRounds ?? 15,
       };

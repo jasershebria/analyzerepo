@@ -92,12 +92,8 @@ class GrepTool(BaseTool):
         lines = raw.splitlines()
 
         offset = args.get("offset") or 0
-        limit = args.get("head_limit")
-        if limit is None:
-            limit = 250
-        if limit == 0:
-            limit = len(lines)
-        lines = lines[offset: offset + limit]
+        if offset:
+            lines = lines[offset:]
 
         if mode == "files_with_matches":
             return lines
@@ -155,12 +151,9 @@ class GrepTool(BaseTool):
                             )
 
         offset = args.get("offset") or 0
-        limit = args.get("head_limit") or 250
-        if limit == 0:
-            limit = 999_999
 
         if mode == "files_with_matches":
-            return matched_files[offset: offset + limit]
+            return matched_files[offset:]
         if mode == "count":
-            return dict(list(counts.items())[offset: offset + limit])
-        return "\n".join(content_lines[offset: offset + limit])
+            return dict(list(counts.items())[offset:])
+        return "\n".join(content_lines[offset:])

@@ -142,6 +142,7 @@ export interface GetRepositoryResponse {
   providerRepoId?: string;
   providerWorkspaceId?: string;
   isActive: boolean;
+  clonedDirectory?: string;
   lastSeenAtUtc?: string;
   createdAt: string;
   updatedAt?: string;

@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { AgentStreamService, AgentEvent, TodoItem } from './agent-stream.service';
+import { AgentStreamService, AgentEvent, TodoItem, ThinkingStep } from './agent-stream.service';
 
 export interface ToolCall {
   id: string;
@@ -9,12 +9,18 @@ export interface ToolCall {
   status: 'pending' | 'done';
 }
 
+export interface ThinkingPlan {
+  intent: string;
+  steps: ThinkingStep[];
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   toolCalls: ToolCall[];
   plan: TodoItem[] | null;
+  thinking: ThinkingPlan | null;
   isStreaming: boolean;
 }
 
@@ -25,6 +31,7 @@ export class AgentStateService {
   readonly messages = signal<ChatMessage[]>([]);
   readonly isStreaming = signal(false);
   readonly repoId = signal<string>('');
+  readonly clonedPath = signal<string>('');
 
   readonly hasMessages = computed(() => this.messages().length > 0);
 
@@ -37,6 +44,7 @@ export class AgentStateService {
       content: text,
       toolCalls: [],
       plan: null,
+      thinking: null,
       isStreaming: false,
     };
 
@@ -46,6 +54,7 @@ export class AgentStateService {
       content: '',
       toolCalls: [],
       plan: null,
+      thinking: null,
       isStreaming: true,
     };
 
@@ -57,7 +66,12 @@ export class AgentStateService {
       .map(m => ({ role: m.role, content: m.content }));
 
     this.streamSvc
-      .stream({ prompt: text, repoId: this.repoId() || undefined, history })
+      .stream({
+        prompt: text,
+        repoId: this.repoId() || undefined,
+        clonedPath: this.clonedPath() || undefined,
+        history
+      })
       .subscribe({
         next: (event: AgentEvent) => this._handleEvent(event, assistantMsg.id),
         error: () => {
@@ -77,6 +91,13 @@ export class AgentStateService {
 
   private _handleEvent(event: AgentEvent, assistantId: string): void {
     switch (event.type) {
+      case 'thinking':
+        this._updateAssistant(assistantId, msg => ({
+          ...msg,
+          thinking: { intent: event.intent, steps: event.steps },
+        }));
+        break;
+
       case 'token':
         this._updateAssistant(assistantId, msg => ({
           ...msg,
@@ -115,6 +136,15 @@ export class AgentStateService {
 
       case 'plan':
         this._updateAssistant(assistantId, msg => ({ ...msg, plan: event.tasks }));
+        break;
+
+      case 'error':
+        this._updateAssistant(assistantId, msg => ({
+          ...msg,
+          content: `Error: ${event.message}`,
+          isStreaming: false,
+        }));
+        this.isStreaming.set(false);
         break;
     }
   }

@@ -5,7 +5,6 @@ from typing import Any
 
 from ._base import BaseTool, ToolDef
 
-_MAX_OUTPUT = 30_000  # chars
 
 
 class BashTool(BaseTool):
@@ -53,6 +52,7 @@ class BashTool(BaseTool):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 start_new_session=True,
+                cwd=self.working_dir,
             )
             return f"Started in background (PID={proc.pid})"
 
@@ -62,10 +62,9 @@ class BashTool(BaseTool):
                 shell=True,
                 capture_output=True,
                 timeout=timeout_s,
+                cwd=self.working_dir,
             )
             output = (result.stdout + result.stderr).decode(errors="replace")
-            if len(output) > _MAX_OUTPUT:
-                output = output[:_MAX_OUTPUT] + f"\n[...truncated at {_MAX_OUTPUT} chars]"
             return output or "(no output)"
         except subprocess.TimeoutExpired:
             return f"Command timed out after {timeout_s:.0f}s"

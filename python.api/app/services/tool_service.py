@@ -45,7 +45,7 @@ class ToolService:
                 path = self._resolve(args.get("path", ""))
                 if not path.exists():
                     return f"File not found: {path}"
-                return path.read_text(encoding="utf-8", errors="replace")[:12000] # Increased limit
+                return path.read_text(encoding="utf-8", errors="replace")
             
             if name == "write_file":
                 path = self._resolve(args.get("path", ""))

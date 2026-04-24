@@ -7,7 +7,6 @@ import httpx
 
 from ._base import BaseTool, ToolDef
 
-_MAX_BYTES = 50_000
 
 
 class _TextExtractor(HTMLParser):
@@ -62,7 +61,7 @@ class WebFetchTool(BaseTool):
         async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
             resp = await client.get(url, headers=headers)
             resp.raise_for_status()
-            raw = resp.text[:_MAX_BYTES]
+            raw = resp.text
 
         ct = resp.headers.get("content-type", "")
         if "html" in ct:

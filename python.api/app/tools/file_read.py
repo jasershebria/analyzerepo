@@ -67,9 +67,25 @@ class FileReadTool(BaseTool):
         )
 
     async def _run(self, args: dict[str, Any]) -> Any:
-        path = Path(args["file_path"])
+        file_path = args.get("file_path") or args.get("path") or args.get("file") or ""
+        if not file_path:
+            raise ValueError("file_path is required")
+        path = Path(file_path)
+        if not path.is_absolute() and self.working_dir:
+            path = Path(self.working_dir) / file_path
+
         if not path.exists():
-            raise FileNotFoundError(f"File not found: {args['file_path']}")
+            # Try to find the file by name anywhere in the working directory
+            if self.working_dir:
+                matches = list(Path(self.working_dir).rglob(path.name))
+                if matches:
+                    path = matches[0]
+                else:
+                    raise FileNotFoundError(
+                        f"File '{path.name}' not found anywhere in {self.working_dir}"
+                    )
+            else:
+                raise FileNotFoundError(f"File not found: {path}")
         suffix = path.suffix.lower()
         if suffix in _IMAGE_EXT:
             raw = await asyncio.to_thread(path.read_bytes)

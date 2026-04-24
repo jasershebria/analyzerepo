@@ -45,7 +45,9 @@ class TodoWriteTool(BaseTool):
         )
 
     async def _run(self, args: dict[str, Any]) -> str:
-        todos: list[dict] = args["todos"]
+        todos: list[dict] = args.get("todos") or args.get("tasks") or args.get("items") or []
+        if not todos:
+            raise ValueError("todos list is required")
         _state.TODO_LIST.clear()
         _state.TODO_LIST.extend(todos)
         return f"Todo list updated ({len(todos)} item{'s' if len(todos) != 1 else ''})"

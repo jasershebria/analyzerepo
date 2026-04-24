@@ -7,7 +7,6 @@ from typing import Any
 
 from ._base import BaseTool, ToolDef
 
-_MAX_OUTPUT = 50_000
 
 
 class RunTestsTool(BaseTool):
@@ -83,9 +82,6 @@ class RunTestsTool(BaseTool):
             return f"Test run timed out after {timeout_s:.0f}s"
         except Exception as exc:
             return f"Failed to run tests: {exc}"
-
-        if len(output) > _MAX_OUTPUT:
-            output = output[:_MAX_OUTPUT] + f"\n[...truncated at {_MAX_OUTPUT} chars]"
 
         status = "PASSED" if exit_code == 0 else f"FAILED (exit code {exit_code})"
         return f"[{status}]\n{output}" if output.strip() else f"[{status}] (no output)"

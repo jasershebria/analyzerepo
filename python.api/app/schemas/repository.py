@@ -84,6 +84,7 @@ class GetRepositoryResponse(CamelModel):
     provider_repo_id: str | None
     provider_workspace_id: str | None
     is_active: bool
+    cloned_directory: str | None
     last_seen_at_utc: datetime | None
     created_at: datetime
     updated_at: datetime | None

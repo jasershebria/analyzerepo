@@ -29,6 +29,7 @@ export class RepoSessionComponent implements OnInit {
         this.repo.set(full);
         this.state.connect(full);
         this.agentState.repoId.set(full.id);
+        this.agentState.clonedPath.set(full.clonedDirectory || '');
         this.loading.set(false);
       },
       error: () => {

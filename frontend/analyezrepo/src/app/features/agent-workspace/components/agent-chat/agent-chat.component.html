@@ -31,6 +31,26 @@
         }
 
         <div class="message__body">
+          <!-- Thinking / planning phase -->
+          @if (msg.thinking) {
+            <div class="message__thinking">
+              <div class="message__thinking-header">
+                <lucide-icon name="brain" [size]="13"></lucide-icon>
+                <span>{{ msg.thinking.intent || 'Planning…' }}</span>
+              </div>
+              @if (msg.thinking.steps.length > 0) {
+                <ol class="message__thinking-steps">
+                  @for (s of msg.thinking.steps; track s.step) {
+                    <li>
+                      <code class="thinking-tool">{{ s.tool }}</code>
+                      <span class="thinking-purpose">{{ s.purpose }}</span>
+                    </li>
+                  }
+                </ol>
+              }
+            </div>
+          }
+
           <!-- Plan display (when agent calls todo_write) -->
           @if (msg.plan && msg.plan.length > 0) {
             <app-plan-display [tasks]="msg.plan"></app-plan-display>

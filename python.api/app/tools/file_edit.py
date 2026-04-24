@@ -31,11 +31,16 @@ class FileEditTool(BaseTool):
         )
 
     async def _run(self, args: dict[str, Any]) -> str:
-        path = Path(args["file_path"])
+        fp = args.get("file_path") or args.get("path") or args.get("file") or ""
+        if not fp:
+            raise ValueError("file_path is required")
+        path = Path(fp)
         if not path.exists():
-            raise FileNotFoundError(f"File not found: {args['file_path']}")
-        old: str = args["old_string"]
-        new: str = args["new_string"]
+            raise FileNotFoundError(f"File not found: {path}")
+        old: str = args.get("old_string") or args.get("old") or args.get("search") or ""
+        new: str = args.get("new_string") or args.get("new") or args.get("replacement") or ""
+        if not old:
+            raise ValueError("old_string is required")
         replace_all: bool = args.get("replace_all", False)
 
         text: str = await asyncio.to_thread(

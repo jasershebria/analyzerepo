@@ -291,9 +291,6 @@ class ToolsService:
         else:
             text = resp.text
 
-        if len(text) > 50_000:
-            text = text[:50_000] + "\n[truncated]"
-
         if inp.prompt:
             text = f"# Fetch context: {inp.prompt}\n\n{text}"
 
@@ -611,8 +608,8 @@ def _grep_with_rg(inp: GrepInput) -> Any:
     lines = raw.splitlines()
 
     offset = inp.offset or 0
-    limit = inp.head_limit or len(lines)
-    lines = lines[offset: offset + limit]
+    if offset:
+        lines = lines[offset:]
 
     if inp.output_mode == GrepOutputMode.files_with_matches:
         return lines

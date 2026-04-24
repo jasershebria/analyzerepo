@@ -23,8 +23,11 @@ class FileWriteTool(BaseTool):
         )
 
     async def _run(self, args: dict[str, Any]) -> str:
-        path = Path(args["file_path"])
-        content: str = args["content"]
+        fp = args.get("file_path") or args.get("path") or args.get("file") or ""
+        if not fp:
+            raise ValueError("file_path is required")
+        path = Path(fp)
+        content: str = args.get("content") or args.get("text") or args.get("data") or ""
         await asyncio.to_thread(
             lambda: (
                 path.parent.mkdir(parents=True, exist_ok=True),

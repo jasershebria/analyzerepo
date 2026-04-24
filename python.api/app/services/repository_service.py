@@ -278,6 +278,7 @@ class RepositoryService:
             provider_repo_id=repo.provider_repo_id,
             provider_workspace_id=repo.provider_workspace_id,
             is_active=repo.is_active,
+            cloned_directory=repo.cloned_directory,
             last_seen_at_utc=repo.last_seen_at_utc,
             created_at=repo.created_at,
             updated_at=repo.updated_at,

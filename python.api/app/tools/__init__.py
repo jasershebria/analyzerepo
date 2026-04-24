@@ -67,82 +67,79 @@ __all__ = [
     "as_langchain_tools",
 ]
 
-_ALL_TOOLS: list[BaseTool] = [
-    # File operations
-    FileReadTool(),
-    FileWriteTool(),
-    FileEditTool(),
-    # Search
-    GlobTool(),
-    GrepTool(),
-    # Shell execution
-    BashTool(),
-    PowerShellTool(),
-    # Web
-    WebFetchTool(),
-    WebSearchTool(),
-    # Notebooks & structured content
-    NotebookEditTool(),
-    TodoWriteTool(),
-    AskUserQuestionTool(),
-    # Utilities
-    SleepTool(),
-    ConfigTool(),
-    BriefTool(),
-    SendMessageTool(),
-    # Task management
-    TaskCreateTool(),
-    TaskGetTool(),
-    TaskListTool(),
-    TaskUpdateTool(),
-    TaskStopTool(),
-    # Scheduling
-    ScheduleCronTool(),
-    CronDeleteTool(),
-    CronListTool(),
-    # Tool discovery
-    ToolSearchTool(),
-    # Remote & mode management
-    RemoteTriggerTool(),
-    EnterPlanModeTool(),
-    ExitPlanModeTool(),
-    EnterWorktreeTool(),
-    ExitWorktreeTool(),
-    # Multi-agent
-    AgentTool(),
-    SkillTool(),
-    TeamCreateTool(),
-    TeamDeleteTool(),
-    # Code intelligence (stub)
-    LSPTool(),
-    # Dev tools
-    RunTestsTool(),
-    GitCommitTool(),
-    # RAG
-    RagSearchTool(),
-]
-
-_REGISTRY: dict[str, BaseTool] = {t.name: t for t in _ALL_TOOLS}
-
-
-def get_all() -> list[BaseTool]:
-    return _ALL_TOOLS
+def get_all(working_dir: str | None = None) -> list[BaseTool]:
+    """Return fresh instances of all tools, optionally tied to a working directory."""
+    return [
+        # File operations
+        FileReadTool(working_dir),
+        FileWriteTool(working_dir),
+        FileEditTool(working_dir),
+        # Search
+        GlobTool(working_dir),
+        GrepTool(working_dir),
+        # Shell execution
+        BashTool(working_dir),
+        PowerShellTool(working_dir),
+        # Web
+        WebFetchTool(working_dir),
+        WebSearchTool(working_dir),
+        # Notebooks & structured content
+        NotebookEditTool(working_dir),
+        TodoWriteTool(working_dir),
+        AskUserQuestionTool(working_dir),
+        # Utilities
+        SleepTool(working_dir),
+        ConfigTool(working_dir),
+        BriefTool(working_dir),
+        SendMessageTool(working_dir),
+        # Task management
+        TaskCreateTool(working_dir),
+        TaskGetTool(working_dir),
+        TaskListTool(working_dir),
+        TaskUpdateTool(working_dir),
+        TaskStopTool(working_dir),
+        # Scheduling
+        ScheduleCronTool(working_dir),
+        CronDeleteTool(working_dir),
+        CronListTool(working_dir),
+        # Tool discovery
+        ToolSearchTool(working_dir),
+        # Remote & mode management
+        RemoteTriggerTool(working_dir),
+        EnterPlanModeTool(working_dir),
+        ExitPlanModeTool(working_dir),
+        EnterWorktreeTool(working_dir),
+        ExitWorktreeTool(working_dir),
+        # Multi-agent
+        AgentTool(working_dir),
+        SkillTool(working_dir),
+        TeamCreateTool(working_dir),
+        TeamDeleteTool(working_dir),
+        # Code intelligence (stub)
+        LSPTool(working_dir),
+        # Dev tools
+        RunTestsTool(working_dir),
+        GitCommitTool(working_dir),
+        # RAG
+        RagSearchTool(working_dir),
+    ]
 
 
-def get_registry() -> dict[str, BaseTool]:
-    return _REGISTRY
+def get_registry(working_dir: str | None = None) -> dict[str, BaseTool]:
+    return {t.name: t for t in get_all(working_dir)}
 
 
-async def execute(name: str, arguments: dict[str, Any]) -> str:
-    if name not in _REGISTRY:
-        raise ValueError(f"Unknown tool: '{name}'. Available: {', '.join(_REGISTRY)}")
-    return await _REGISTRY[name].call(arguments)
+async def execute(name: str, arguments: dict[str, Any], working_dir: str | None = None) -> str:
+    registry = get_registry(working_dir)
+    if name not in registry:
+        raise ValueError(f"Unknown tool: '{name}'. Available: {', '.join(registry)}")
+    return await registry[name].call(arguments)
 
 
-def definitions() -> list[dict[str, Any]]:
-    return [t.definition().to_dict() for t in _ALL_TOOLS]
+def definitions(working_dir: str | None = None) -> list[dict[str, Any]]:
+    return [t.definition().to_dict() for t in get_all(working_dir)]
 
 
-def as_langchain_tools() -> list:
+def as_langchain_tools(working_dir: str | None = None) -> list:
     """Return all registered tools as LangChain StructuredTool objects."""
-    return [t.to_langchain_tool() for t in _ALL_TOOLS]
+    return [t.to_langchain_tool() for t in get_all(working_dir)]

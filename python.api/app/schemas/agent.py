@@ -12,6 +12,7 @@ class AgentMessage(CamelModel):
 class AgentRunRequest(CamelModel):
     prompt: str
     repo_id: str | None = None
+    cloned_path: str | None = None
     system_prompt: str | None = None
     working_dir: str | None = None
     history: list[AgentMessage] = []

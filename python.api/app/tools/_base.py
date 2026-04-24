@@ -66,6 +66,9 @@ class BaseTool(ABC):
     name: str = ""
     description: str = ""
 
+    def __init__(self, working_dir: str | None = None) -> None:
+        self.working_dir = working_dir
+
     @abstractmethod
     def definition(self) -> ToolDef: ...
 
@@ -73,6 +76,7 @@ class BaseTool(ABC):
     async def _run(self, args: dict[str, Any]) -> Any: ...
 
     async def call(self, args: dict[str, Any]) -> str:
+        print(f"DEBUG: Tool Fired: {self.name}({json.dumps(args)})")
         result = await self._run(args)
         if result is None:
             return ""

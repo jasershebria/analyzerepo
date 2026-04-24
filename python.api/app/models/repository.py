@@ -27,6 +27,7 @@ class Repository(Base, AuditMixin):
     provider_workspace_id: Mapped[str | None] = mapped_column("ProviderWorkspaceId", String(100), nullable=True)
     last_seen_at_utc: Mapped[datetime | None] = mapped_column("LastSeenAtUtc", DateTime(timezone=True), nullable=True)
     is_active: Mapped[bool] = mapped_column("IsActive", Boolean, default=True, nullable=False)
+    cloned_directory: Mapped[str | None] = mapped_column("ClonedDirectory", String(500), nullable=True)
 
     auth: Mapped[RepositoryAuth | None] = relationship(
         "RepositoryAuth", uselist=False, cascade="all, delete-orphan", lazy="joined"

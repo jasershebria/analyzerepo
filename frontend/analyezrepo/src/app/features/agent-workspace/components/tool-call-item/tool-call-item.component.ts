@@ -6,6 +6,7 @@ const DESTRUCTIVE_TOOLS = new Set(['file_write', 'file_edit', 'bash', 'powershel
 @Component({
   selector: 'app-tool-call-item',
   templateUrl: './tool-call-item.component.html',
+  styleUrls: ['./tool-call-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
