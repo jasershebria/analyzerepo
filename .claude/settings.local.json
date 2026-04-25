@@ -9,7 +9,10 @@
       "Bash(/c/Users/jaser/AppData/Local/Programs/Python/Python314/python.exe -c ' *)",
       "Bash(python -c ' *)",
       "Bash(python -c \"import langchain_core; print\\('ok'\\)\")",
-      "Bash(xargs wc *)"
+      "Bash(xargs wc *)",
+      "Bash(npx --yes @nestjs/cli new nest.api --package-manager npm --skip-git --strict)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)"
     ]
   }
 }
